@@ -13,6 +13,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "arweave": "^1.10.13",
+    "fast-json-stringify": "^2.7.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -27,7 +28,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "wallet:compile": "tsc src/arweave/gen-wallet.ts -esModuleInterop",
-    "wallet:create": "node src/arweave/gen-wallet"
+    "wallet:create": "node src/arweave/gen-wallet",
+    "build:program": "cargo build-bpf --manifest-path=./program/Cargo.toml --bpf-out-dir=dist/program"
   },
   "eslintConfig": {
     "extends": [

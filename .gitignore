@@ -24,3 +24,6 @@ yarn-error.log*
 
 /src/arweave/wallet/wallet.json
 /src/arweave/wallet/gen-wallet.js
+
+/program/target
+/dist
