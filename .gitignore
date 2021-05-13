@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/src/arweave/wallet/wallet.json
+/src/arweave/wallet/gen-wallet.js
