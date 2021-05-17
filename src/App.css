@@ -1,38 +1,30 @@
-.App {
-  text-align: center;
+.screen-root {
+  margin: 0 auto;
+  max-width: 1000px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.app-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 11rem 1fr;
+  grid-template-areas:
+    "sendmoney"
+    "showtxt";
+  gap: 1em 0;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.app-body-top {
+  grid-area: sendmoney;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.app-body-mid {
+  grid-area: showtxt;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media screen and (orientation: portrait) and (max-width: 375px) {
+  .app-body-mid {
+    max-width: 360px;
   }
 }

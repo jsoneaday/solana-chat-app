@@ -1,24 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Connection } from "@solana/web3.js";
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import Sender from "./components/Sender";
+import TransactionsView from "./components/TransactionView";
+import {
+  getTransactions,
+  TransactionWithSignature,
+} from "./helpers/transactions";
+import { initWallet, WalletAdapter } from "./helpers/wallet";
 
 function App() {
+  const [transactions, setTransactions] =
+    useState<Array<TransactionWithSignature>>();
+  const conn = React.useRef<Connection>();
+  const wall = React.useRef<WalletAdapter>();
+
+  useEffect(() => {
+    initWallet().then(([connection, wallet]: [Connection, WalletAdapter]) => {
+      conn.current = connection;
+      wall.current = wallet;
+      if (wallet.publicKey) {
+        getTransactions(connection, wallet.publicKey).then((trans) => {
+          setTransactions(trans);
+        });
+      }
+    });
+  }, []);
+
+  const didSendMoney = () => {
+    getTransactions(conn.current!, wall.current!.publicKey!).then((trans) => {
+      setTransactions(trans);
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="screen-root app-body">
+      <div className="app-body-top">
+        <h3>Send Money on Solana</h3>
+        <Sender didSendMoney={didSendMoney} />
+      </div>
+      <main className="app-body-mid">
+        <TransactionsView transactions={transactions} />
+      </main>
     </div>
   );
 }

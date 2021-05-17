@@ -1530,10 +1530,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@solana/web3.js@^1.10.1":
-  "integrity" "sha512-5zepm+AaVfC6uao/WxKT7SlemqgGEp+x7XUv+018RURIx+XEcF+G2ZgjrIbjy5OoXJyfz+wGw8Or2fxsypderA=="
-  "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.10.1.tgz"
-  "version" "1.10.1"
+"@solana/web3.js@^1.11.0":
+  "integrity" "sha512-kmngWxntzp0HNhWInd7/3g2uqxdOrahvaHOyjilcRe+WCiC777gERz3+eIAbxIYx2zAZPjy02MZzLgoRHccZoQ=="
+  "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.11.0.tgz"
+  "version" "1.11.0"
   dependencies:
     "@babel/runtime" "^7.12.5"
     "bn.js" "^5.0.0"
