@@ -67,12 +67,11 @@ pub fn process_instruction(
     msg!("Set existing_data_message");
     let updated_data = existing_data_messages.try_to_vec().expect("Failed to encode data."); // set messages object back to vector data
 
-    // data algorithm for storing data into account and then archiving innto Arweave
-    // 1. Each ChatMessage object will be prepopulated for txt field having 140 characters.
+    // data algorithm for storing data into account and then archiving into Arweave
+    // 1. Each ChatMessage object will be prepopulated for txt field having 43 characters (length of a arweave tx).
     // Each ChatMessageContainer will be prepopulated with 10 ChatMessage objects with dummy data.
-    // 2. Only up to 10 vector elements will be allowed in a ChatMessageContainer
-    // 3. Client side will test data before each add for element count
-    // 4. If count is 10 this data will be archived to arweave and then overwritten to 0's.
+    // 2. Client will submit an arweave tx for each message; get back the tx id; and submit it to our program.
+    // 3. This tx id will be saved to the Solana program and be used for querying back to arweave to get actual data.
     let data = &mut &mut account.data.borrow_mut();
     msg!("Attempting save data.");
     data[..updated_data.len()].copy_from_slice(&updated_data);    
