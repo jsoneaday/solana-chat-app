@@ -22,8 +22,9 @@ pub struct ChatMessageContainer {
 // example arweave tx (length 43)
 // 1seRanklLU_1VTGkEk7P0xAwMJfA7owA1JHW5KyZKlY
 // ReUohI9tEmXQ6EN9H9IkRjY9bSdgql_OdLUCOeMEte0
+const DUMMY_TX_ID: &str = "0000000000000000000000000000000000000000000";
 pub fn get_init_chat_message() -> ChatMessage {
-    ChatMessage{ archive_id: String::from("0000000000000000000000000000000000000000000") }
+    ChatMessage{ archive_id: String::from(DUMMY_TX_ID) }
 }
 pub fn get_init_chat_messages() -> Vec<ChatMessage> {
     let mut messages = Vec::new();
@@ -60,7 +61,7 @@ pub fn process_instruction(
         msg!("Failed to decode account data. {:?}", err);
         ProgramError::InvalidInstructionData
     })?;
-    let index = existing_data_messages.archive_ids.iter().position(|p| p.archive_id == String::from("0000000000000000000000000000000000000000000")).unwrap(); // find first dummy data entry
+    let index = existing_data_messages.archive_ids.iter().position(|p| p.archive_id == String::from(DUMMY_TX_ID)).unwrap(); // find first dummy data entry
     msg!("Existing archive_id {}", existing_data_messages.archive_ids[index].archive_id);
     existing_data_messages.archive_ids[index] = instruction_data_message; // set dummy data to new entry
     msg!("Set existing_data_message");
@@ -108,7 +109,8 @@ mod test {
             Epoch::default(),
         );
         
-        let instruction_data_chat_message = ChatMessage{ archive_id: String::from("abcdefghijabcdefghijabcdefghijabcdefghijabc") };
+        let tx_id = "abcdefghijabcdefghijabcdefghijabcdefghijabc";
+        let instruction_data_chat_message = ChatMessage{ archive_id: String::from(tx_id) };
         let instruction_data = instruction_data_chat_message.try_to_vec().unwrap();
 
         let accounts = vec![account];
@@ -120,7 +122,7 @@ mod test {
         println!("archive_id {}", result);
         // I added first data and expect it to contain the given data
         assert_eq!(
-            String::from("abcdefghijabcdefghijabcdefghijabcdefghijabc").eq(result),
+            String::from(tx_id).eq(result),
             true
         );
         // process_instruction(&program_id, &accounts, &instruction_data).unwrap();
