@@ -29,7 +29,8 @@
     "eject": "react-scripts eject",
     "wallet:compile": "tsc src/arweave/gen-wallet.ts -esModuleInterop",
     "wallet:create": "node src/arweave/gen-wallet",
-    "build:program": "cargo build-bpf --manifest-path=./program/Cargo.toml --bpf-out-dir=dist/program"
+    "build:program": "cargo build-bpf --manifest-path=./program/Cargo.toml --bpf-out-dir=dist/program",
+    "test:program": "cargo test-bpf --manifest-path=./program/Cargo.toml"
   },
   "eslintConfig": {
     "extends": [
