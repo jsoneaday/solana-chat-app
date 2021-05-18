@@ -1,29 +1,47 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { TransactionWithSignature } from "../helpers/transactions";
 import "./TransactionView.css";
 
 interface TransactionsViewProps {
-  transactions?: Array<TransactionWithSignature>;
+  transactions: Array<TransactionWithSignature>;
+  setMidRowScrollTop: (total: number) => void;
 }
 
-const TransactionsView: FC<TransactionsViewProps> = ({ transactions }) => {
-  const [localTrans, setLocalTrans] = useState<JSX.Element[]>();
+const TransactionsView: FC<TransactionsViewProps> = ({
+  transactions,
+  setMidRowScrollTop,
+}) => {
+  const totalItemsHeight = React.useRef(0);
+  const incrementItemsHeight = (height: number) => {
+    console.log("item height", height);
+    totalItemsHeight.current += height;
+  };
+  const view = transactions.map((trans) => {
+    return (
+      <TransactionItemView
+        key={trans.signature}
+        transaction={trans}
+        incrementItemsHeight={incrementItemsHeight}
+      />
+    );
+  });
 
   useEffect(() => {
-    const newTrans = transactions?.map((trans) => {
-      return <TransactionItemView key={trans.signature} transaction={trans} />;
-    });
-    setLocalTrans(newTrans);
-    console.log("width", window.screen.width);
-  }, [transactions]);
+    setMidRowScrollTop(totalItemsHeight.current);
+  });
 
-  return <>{localTrans}</>;
+  return <>{view}</>;
 };
 
 interface TransactionItemViewProps {
   transaction: TransactionWithSignature;
+  incrementItemsHeight: (count: number) => void;
 }
-const TransactionItemView: FC<TransactionItemViewProps> = ({ transaction }) => {
+const TransactionItemView: FC<TransactionItemViewProps> = ({
+  transaction,
+  incrementItemsHeight,
+}) => {
+  const itemHeight = React.useRef<HTMLUListElement | null>(null);
   const signature = transaction.signature?.toString();
   const meta = transaction.confirmedTransaction.meta;
   const trans = transaction.confirmedTransaction.transaction;
@@ -31,8 +49,12 @@ const TransactionItemView: FC<TransactionItemViewProps> = ({ transaction }) => {
   if (meta) {
     amount = meta.preBalances[0] - meta.postBalances[0];
   }
+  useEffect(() => {
+    incrementItemsHeight(itemHeight.current?.clientHeight ?? 0);
+  });
+
   return (
-    <ul className="trans-item trans-meta">
+    <ul ref={itemHeight} className="trans-item trans-meta">
       <li key={signature + "signature"}>
         <label>Tx:</label> &nbsp;
         {signature}

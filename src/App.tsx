@@ -11,10 +11,12 @@ import {
 import { initWallet, WalletAdapter } from "./helpers/wallet";
 
 function App() {
-  const [transactions, setTransactions] =
-    useState<Array<TransactionWithSignature>>();
+  const [transactions, setTransactions] = useState<
+    Array<TransactionWithSignature>
+  >([]);
   const conn = React.useRef<Connection>();
   const wall = React.useRef<WalletAdapter>();
+  const midRow = React.useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     initWallet().then(([connection, wallet]: [Connection, WalletAdapter]) => {
@@ -28,6 +30,14 @@ function App() {
     });
   }, []);
 
+  const setMidRowScrollTop = (height: number) => {
+    if (midRow.current) {
+      console.log("total children height", height);
+      midRow.current.scrollTop = height;
+      console.log("scrollTop", midRow.current.scrollTop);
+    }
+  };
+
   const didSendMoney = () => {
     getTransactions(conn.current!, wall.current!.publicKey!).then((trans) => {
       setTransactions(trans);
@@ -40,8 +50,11 @@ function App() {
         <h3>Send Money on Solana</h3>
         <MoneySender didSendMoney={didSendMoney} />
       </div>
-      <div className="app-body-mid">
-        <TransactionsView transactions={transactions} />
+      <div ref={midRow} className="app-body-mid">
+        <TransactionsView
+          transactions={transactions}
+          setMidRowScrollTop={setMidRowScrollTop}
+        />
       </div>
       <div className="app-body-bottom">
         <MessageSender />
