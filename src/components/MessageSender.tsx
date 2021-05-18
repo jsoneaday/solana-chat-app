@@ -15,7 +15,12 @@ const MessageSender = () => {
 
   return (
     <div className="msg-container">
-      <input type="text" value={message} onChange={onChangeMessage} />
+      <input
+        className="msg-input"
+        type="text"
+        value={message}
+        onChange={onChangeMessage}
+      />
       <button onClick={onClickSubmit}>Submit</button>
     </div>
   );
