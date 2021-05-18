@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { sendMoney } from "../helpers/wallet";
-import "./Sender.css";
+import "./MoneySender.css";
 
-interface SenderProps {
+interface MoneySenderProps {
   didSendMoney: () => void;
 }
 
-const Sender: React.FC<SenderProps> = ({ didSendMoney }) => {
+const MoneySender: React.FC<MoneySenderProps> = ({ didSendMoney }) => {
   const [amount, setAmount] = useState(0);
   const [address, setAddress] = useState("");
 
@@ -52,4 +52,4 @@ const Sender: React.FC<SenderProps> = ({ didSendMoney }) => {
   );
 };
 
-export default Sender;
+export default MoneySender;

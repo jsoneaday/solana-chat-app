@@ -1,0 +1,12 @@
+.msg-container {
+  max-width: 75%;
+  border: var(--panel-border);
+  border-radius: var(--panel-border-radius);
+  padding: var(--panel-padding);
+}
+
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  .msg-container {
+    max-width: 100%;
+  }
+}

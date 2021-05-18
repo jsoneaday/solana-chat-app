@@ -1,7 +1,8 @@
 import { Connection } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import Sender from "./components/Sender";
+import MessageSender from "./components/MessageSender";
+import MoneySender from "./components/MoneySender";
 import TransactionsView from "./components/TransactionView";
 import {
   getTransactions,
@@ -37,11 +38,14 @@ function App() {
     <div className="screen-root app-body">
       <div className="app-body-top">
         <h3>Send Money on Solana</h3>
-        <Sender didSendMoney={didSendMoney} />
+        <MoneySender didSendMoney={didSendMoney} />
       </div>
-      <main className="app-body-mid">
+      <div className="app-body-mid">
         <TransactionsView transactions={transactions} />
-      </main>
+      </div>
+      <div className="app-body-bottom">
+        <MessageSender />
+      </div>
     </div>
   );
 }

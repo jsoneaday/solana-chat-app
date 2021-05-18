@@ -4,23 +4,26 @@
 }
 
 .app-body {
+  min-height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 11rem 1fr;
-  grid-template-areas:
-    "sendmoney"
-    "showtxt";
+  grid-template-rows: auto minmax(100px, 550px) auto;
   gap: 1em 0;
   padding-right: 0.5em;
   padding-left: 0.5em;
 }
 
 .app-body-top {
-  grid-area: sendmoney;
+  grid-row: 1;
 }
 
 .app-body-mid {
-  grid-area: showtxt;
+  grid-row: 2;
+  overflow-y: scroll;
+}
+
+.app-body-bottom {
+  grid-row: 3;
 }
 
 @media screen and (orientation: portrait) and (max-width: 375px) {
