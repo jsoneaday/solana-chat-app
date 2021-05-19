@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { TransactionWithSignature } from "../helpers/transactions";
+import { TransactionWithSignature } from "../solana/transactions";
 import "./TransactionView.css";
 
 interface TransactionsViewProps {

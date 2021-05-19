@@ -7,8 +7,8 @@ import TransactionsView from "./components/TransactionView";
 import {
   getTransactions,
   TransactionWithSignature,
-} from "./helpers/transactions";
-import { initWallet, WalletAdapter } from "./helpers/wallet";
+} from "./solana/transactions";
+import { initWallet, WalletAdapter } from "./solana/wallet";
 
 function App() {
   const [transactions, setTransactions] = useState<

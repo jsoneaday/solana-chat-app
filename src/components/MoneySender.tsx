@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { sendMoney } from "../helpers/wallet";
+import { sendMoney } from "../solana/wallet";
 import "./MoneySender.css";
 
 interface MoneySenderProps {
