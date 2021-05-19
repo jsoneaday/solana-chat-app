@@ -11,7 +11,8 @@ use solana_program::{
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct ChatMessage {
-    pub archive_id: String
+    pub archive_id: String,
+    pub created_on: String
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
@@ -23,8 +24,9 @@ pub struct ChatMessageContainer {
 // 1seRanklLU_1VTGkEk7P0xAwMJfA7owA1JHW5KyZKlY
 // ReUohI9tEmXQ6EN9H9IkRjY9bSdgql_OdLUCOeMEte0
 const DUMMY_TX_ID: &str = "0000000000000000000000000000000000000000000";
+const DUMMY_CREATED_ON: &str = "0000000000000000"; // milliseconds, 16 digits
 pub fn get_init_chat_message() -> ChatMessage {
-    ChatMessage{ archive_id: String::from(DUMMY_TX_ID) }
+    ChatMessage{ archive_id: String::from(DUMMY_TX_ID), created_on: String::from(DUMMY_CREATED_ON) }
 }
 pub fn get_init_chat_messages() -> Vec<ChatMessage> {
     let mut messages = Vec::new();
@@ -108,20 +110,27 @@ mod test {
             Epoch::default(),
         );
         
-        let tx_id = "abcdefghijabcdefghijabcdefghijabcdefghijabc";
-        let instruction_data_chat_message = ChatMessage{ archive_id: String::from(tx_id) };
+        let archive_id = "abcdefghijabcdefghijabcdefghijabcdefghijabc";
+        let created_on = "0001621449453837";
+        let instruction_data_chat_message = ChatMessage{ archive_id: String::from(archive_id), created_on: String::from(created_on) };
         let instruction_data = instruction_data_chat_message.try_to_vec().unwrap();
 
         let accounts = vec![account];
 
         process_instruction(&program_id, &accounts, &instruction_data).unwrap();
-        let result = &ChatMessageContainer::try_from_slice(&accounts[0].data.borrow())
-            .unwrap()
-            .archive_ids[0].archive_id;
-        println!("archive_id {}", result);
+        let chat_msg = &ChatMessageContainer::try_from_slice(&accounts[0].data.borrow())
+        .unwrap()
+        .archive_ids[0];
+        let test_archive_id = &chat_msg.archive_id;
+        let test_created_on = &chat_msg.created_on;
+        println!("chat message {:?}", &chat_msg);
         // I added first data and expect it to contain the given data
         assert_eq!(
-            String::from(tx_id).eq(result),
+            String::from(archive_id).eq(test_archive_id),
+            true
+        );
+        assert_eq!(
+            String::from(created_on).eq(test_created_on),
             true
         );
         // process_instruction(&program_id, &accounts, &instruction_data).unwrap();

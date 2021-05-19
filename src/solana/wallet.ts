@@ -46,7 +46,7 @@ export async function sendMoney(
       toPubkey: destPubkey,
       lamports, // about half a SOL
     });
-    let trans = await setWalletTransaction(instruction);
+    let trans = await setWalletTransaction(wallet, instruction);
 
     let signature = await signAndSendTransaction(wallet, trans);
     let result = await connection.confirmTransaction(signature, "singleGossip");
@@ -57,6 +57,7 @@ export async function sendMoney(
 }
 
 export async function setWalletTransaction(
+  wallet: WalletAdapter,
   instruction: TransactionInstruction
 ): Promise<Transaction> {
   const transaction = new Transaction();
