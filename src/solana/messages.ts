@@ -2,6 +2,7 @@ import { WalletAdapter } from "./wallet";
 import borsh from "borsh";
 import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
 import { getChatMessageAccountPubkey } from "./accounts";
+import { programId } from "./program";
 
 class ChatMessage {
   archive_id: string = "0000000000000000000000000000000000000000000";
@@ -50,13 +51,11 @@ export async function getMessageSentHistory(
 
 export async function getMessageReceivedHistory(
   connection: Connection,
-  wallet: WalletAdapter,
-  programId: PublicKey
+  wallet: WalletAdapter
 ): Promise<Array<ChatMessage>> {
   const walletAccount = await getChatMessageAccountPubkey(
     connection,
     wallet,
-    programId,
     CHAT_MESSAGE_SIZE
   );
   const messages: Array<ChatMessage> = [];
@@ -66,13 +65,13 @@ export async function getMessageReceivedHistory(
 export async function sendMessage(
   connection: Connection,
   wallet: WalletAdapter,
-  programId: PublicKey,
+  destPubkeyStr: string,
   msg: string
 ): Promise<void> {
+  const destPubkey = new PublicKey(destPubkeyStr);
   const walletChatAccountPubkey = await getChatMessageAccountPubkey(
     connection,
     wallet,
-    programId,
     CHAT_MESSAGE_SIZE
   );
 }

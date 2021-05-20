@@ -4,6 +4,7 @@ import {
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
+import { programId } from "./program";
 import {
   setWalletTransaction,
   signAndSendTransaction,
@@ -13,7 +14,6 @@ import {
 export async function getChatMessageAccountPubkey(
   connection: Connection,
   wallet: WalletAdapter,
-  programId: PublicKey,
   space: number
 ): Promise<PublicKey> {
   if (!wallet.publicKey) {
