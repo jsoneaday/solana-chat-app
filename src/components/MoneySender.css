@@ -6,7 +6,7 @@
 }
 
 .send-inputs {
-  height: 6rem;
+  height: 5rem;
   display: grid;
   grid-template-columns: 1.2fr 1.8fr;
   grid-template-rows: 1fr 1fr 1fr;

@@ -1,13 +1,6 @@
-.trans-item {
+.dest-container {
   border: var(--panel-border);
   border-radius: var(--panel-border-radius);
   padding: var(--panel-padding);
-}
-
-.trans-meta {
-  list-style-type: none;
-}
-
-.trans-meta li {
-  word-wrap: break-word;
+  margin-bottom: 0.5rem;
 }

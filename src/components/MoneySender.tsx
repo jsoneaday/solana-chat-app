@@ -3,19 +3,18 @@ import { sendMoney } from "../solana/wallet";
 import "./MoneySender.css";
 
 interface MoneySenderProps {
+  destinationAddressStr: string;
   didSendMoney: () => void;
 }
 
-const MoneySender: React.FC<MoneySenderProps> = ({ didSendMoney }) => {
+const MoneySender: React.FC<MoneySenderProps> = ({
+  destinationAddressStr,
+  didSendMoney,
+}) => {
   const [amount, setAmount] = useState(0);
-  const [address, setAddress] = useState("");
 
   const onChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(e.target.value ? Number(e.target.value) : 0);
-  };
-
-  const onChangeAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddress(e.target.value ? e.target.value.toString() : "");
   };
 
   const onClickSendMoney = async (
@@ -23,24 +22,19 @@ const MoneySender: React.FC<MoneySenderProps> = ({ didSendMoney }) => {
   ) => {
     e.preventDefault();
 
-    await sendMoney(address, amount);
+    await sendMoney(destinationAddressStr, amount);
     didSendMoney();
   };
 
   return (
     <form className="send-container">
       <div className="send-inputs">
-        <div className="send-top-left">
+        <strong className="send-top-left">Send Money</strong>
+        <div className="send-mid-left">
           <label htmlFor="amount">Amount (lamports)</label>
         </div>
-        <div className="send-mid-left">
-          <label htmlFor="address">Address</label>
-        </div>
-        <div className="send-top-right">
-          <input type="text" value={amount} onChange={onChangeAmount} />
-        </div>
         <div className="send-mid-right">
-          <input type="text" value={address} onChange={onChangeAddress} />
+          <input type="text" value={amount} onChange={onChangeAmount} />
         </div>
         <div className="send-bottom-right">
           <button className="send-buttons" onClick={onClickSendMoney}>

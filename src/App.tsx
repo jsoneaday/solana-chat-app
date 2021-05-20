@@ -1,6 +1,7 @@
 import { Connection } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import DestinationAddressSetter from "./components/DestinationAddressSetter";
 import MessageSender from "./components/MessageSender";
 import MoneySender from "./components/MoneySender";
 import TransactionsView from "./components/TransactionView";
@@ -11,6 +12,7 @@ import {
 import { initWallet, WalletAdapter } from "./solana/wallet";
 
 function App() {
+  const [destAddress, setDestAddress] = useState("");
   const [transactions, setTransactions] = useState<
     Array<TransactionWithSignature>
   >([]);
@@ -47,8 +49,15 @@ function App() {
   return (
     <div className="screen-root app-body">
       <div className="app-body-top">
-        <h3>Send Money on Solana</h3>
-        <MoneySender didSendMoney={didSendMoney} />
+        <h3>Chat on Solana</h3>
+        <DestinationAddressSetter
+          address={destAddress}
+          setAddress={setDestAddress}
+        />
+        <MoneySender
+          destinationAddressStr={destAddress}
+          didSendMoney={didSendMoney}
+        />
       </div>
       <div ref={midRow} className="app-body-mid">
         <TransactionsView
