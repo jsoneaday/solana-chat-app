@@ -15,11 +15,6 @@ pub struct ChatMessage {
     pub created_on: String
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub struct ChatMessageContainer {
-    pub archive_ids: Vec<ChatMessage>
-}
-
 // example arweave tx (length 43)
 // 1seRanklLU_1VTGkEk7P0xAwMJfA7owA1JHW5KyZKlY
 // ReUohI9tEmXQ6EN9H9IkRjY9bSdgql_OdLUCOeMEte0
@@ -30,7 +25,7 @@ pub fn get_init_chat_message() -> ChatMessage {
 }
 pub fn get_init_chat_messages() -> Vec<ChatMessage> {
     let mut messages = Vec::new();
-    for _ in 0..10 {
+    for _ in 0..20 {
         messages.push(get_init_chat_message());
     }
     return messages;
@@ -59,13 +54,13 @@ pub fn process_instruction(
     })?;
     msg!("Instruction_data message object {:?}", instruction_data_message);
 
-    let mut existing_data_messages = ChatMessageContainer::try_from_slice(&account.data.borrow_mut()).map_err(|err| {
+    let mut existing_data_messages = <Vec<ChatMessage>>::try_from_slice(&account.data.borrow_mut()).map_err(|err| {
         msg!("Failed to decode account data. {:?}", err);
         ProgramError::InvalidInstructionData
     })?;
-    let index = existing_data_messages.archive_ids.iter().position(|p| p.archive_id == String::from(DUMMY_TX_ID)).unwrap(); // find first dummy data entry
-    msg!("Existing archive_id {}", existing_data_messages.archive_ids[index].archive_id);
-    existing_data_messages.archive_ids[index] = instruction_data_message; // set dummy data to new entry
+    let index = existing_data_messages.iter().position(|p| p.archive_id == String::from(DUMMY_TX_ID)).unwrap(); // find first dummy data entry
+    msg!("Existing archive_id {}", existing_data_messages[index].archive_id);
+    existing_data_messages[index] = instruction_data_message; // set dummy data to new entry
     msg!("Set existing_data_message");
     let updated_data = existing_data_messages.try_to_vec().expect("Failed to encode data."); // set messages object back to vector data
 
@@ -96,7 +91,7 @@ mod test {
         let program_id = Pubkey::default();
         let key = Pubkey::default();
         let mut lamports = 0;
-        let data = ChatMessageContainer{ archive_ids: get_init_chat_messages() }; // vec![0; get_init_chat_messages().len()];
+        let data = get_init_chat_messages(); // vec![0; get_init_chat_messages().len()];
         let mut data_data = data.try_to_vec().unwrap();
         let owner = Pubkey::default();
         let account = AccountInfo::new(
@@ -118,12 +113,11 @@ mod test {
         let accounts = vec![account];
 
         process_instruction(&program_id, &accounts, &instruction_data).unwrap();
-        let chat_msg = &ChatMessageContainer::try_from_slice(&accounts[0].data.borrow())
-        .unwrap()
-        .archive_ids[0];
-        let test_archive_id = &chat_msg.archive_id;
-        let test_created_on = &chat_msg.created_on;
-        println!("chat message {:?}", &chat_msg);
+        let chat_messages = &<Vec<ChatMessage>>::try_from_slice(&accounts[0].data.borrow())
+        .unwrap()[0];
+        let test_archive_id = &chat_messages.archive_id;
+        let test_created_on = &chat_messages.created_on;
+        println!("chat message {:?}", &chat_messages);
         // I added first data and expect it to contain the given data
         assert_eq!(
             String::from(archive_id).eq(test_archive_id),

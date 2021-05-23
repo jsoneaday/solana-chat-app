@@ -1,13 +1,13 @@
 import React, { FC, useEffect } from "react";
 import { TransactionWithSignature } from "../solana/transactions";
-import "./TransactionView.css";
+import "./MessagesView.css";
 
-interface TransactionsViewProps {
+interface MessagesViewProps {
   transactions: Array<TransactionWithSignature>;
   setMidRowScrollTop: (total: number) => void;
 }
 
-const TransactionsView: FC<TransactionsViewProps> = ({
+const MessagesView: FC<MessagesViewProps> = ({
   transactions,
   setMidRowScrollTop,
 }) => {
@@ -18,7 +18,7 @@ const TransactionsView: FC<TransactionsViewProps> = ({
   };
   const view = transactions.map((trans) => {
     return (
-      <TransactionItemView
+      <MessagesItemView
         key={trans.signature}
         transaction={trans}
         incrementItemsHeight={incrementItemsHeight}
@@ -33,11 +33,11 @@ const TransactionsView: FC<TransactionsViewProps> = ({
   return <>{view}</>;
 };
 
-interface TransactionItemViewProps {
+interface MessagesItemViewProps {
   transaction: TransactionWithSignature;
   incrementItemsHeight: (count: number) => void;
 }
-const TransactionItemView: FC<TransactionItemViewProps> = ({
+const MessagesItemView: FC<MessagesItemViewProps> = ({
   transaction,
   incrementItemsHeight,
 }) => {
@@ -87,4 +87,4 @@ const TransactionItemView: FC<TransactionItemViewProps> = ({
   );
 };
 
-export default TransactionsView;
+export default MessagesView;

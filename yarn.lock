@@ -3227,7 +3227,7 @@
   "resolved" "https://registry.npmjs.org/buffer-indexof/-/buffer-indexof-1.1.1.tgz"
   "version" "1.1.1"
 
-"buffer-layout@^1.2.0":
+"buffer-layout@^1.2.0", "buffer-layout@^1.2.1":
   "integrity" "sha512-RUTGEYG1vX0Zp1dStQFl8yeU/LEBPXVtHwzzDbPWkE5zq+Prt9fkFLKNiwmaeHg6BBiRMcQAgj4cynazO6eekw=="
   "resolved" "https://registry.npmjs.org/buffer-layout/-/buffer-layout-1.2.1.tgz"
   "version" "1.2.1"

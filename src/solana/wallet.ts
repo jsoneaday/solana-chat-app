@@ -16,7 +16,7 @@ export interface WalletAdapter extends EventEmitter {
   disconnect: () => any;
 }
 
-const cluster = "https://devnet.solana.com";
+const cluster = "http://localhost:8899";
 const connection = new Connection(cluster, "confirmed");
 const wallet: WalletAdapter = new Wallet("https://www.sollet.io", cluster);
 
@@ -73,9 +73,17 @@ export async function signAndSendTransaction(
   wallet: WalletAdapter,
   transaction: Transaction
 ): Promise<string> {
-  let signedTrans = await wallet.signTransaction(transaction);
-  console.log("sign transaction");
-  let signature = await connection.sendRawTransaction(signedTrans.serialize());
-  console.log("send raw transaction");
-  return signature;
+  try {
+    console.log("start signAndSendTransaction");
+    let signedTrans = await wallet.signTransaction(transaction);
+    console.log("signed transaction");
+    let signature = await connection.sendRawTransaction(
+      signedTrans.serialize()
+    );
+    console.log("sent raw transaction");
+    return signature;
+  } catch (err) {
+    console.log("signAndSendTransaction error", err);
+    throw err;
+  }
 }

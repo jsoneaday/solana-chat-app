@@ -1,9 +1,4 @@
-import {
-  Connection,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
+import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
 import { programId } from "./program";
 import {
   setWalletTransaction,
@@ -14,27 +9,32 @@ import {
 export async function getChatMessageAccountPubkey(
   connection: Connection,
   wallet: WalletAdapter,
-  space: number
+  space: number,
+  reset: boolean = false
 ): Promise<PublicKey> {
   if (!wallet.publicKey) {
     throw Error("Wallet has no PublicKey");
   }
   let chatAccountPubkey: PublicKey | null = null;
-  const existingPubkeyStr = localStorage.getItem(
-    wallet.publicKey.toBase58() ?? ""
-  );
-  if (existingPubkeyStr) {
-    chatAccountPubkey = new PublicKey(existingPubkeyStr);
-    console.log("chat account found");
-    return chatAccountPubkey;
+  if (!reset) {
+    const existingPubkeyStr = localStorage.getItem(
+      wallet.publicKey.toBase58() ?? ""
+    );
+    if (existingPubkeyStr) {
+      chatAccountPubkey = new PublicKey(existingPubkeyStr);
+      console.log("chat account found");
+      return chatAccountPubkey;
+    }
   }
 
-  const CHAT_SEED = "chat";
+  console.log("start creating new chat account");
+  const CHAT_SEED = "chat" + Math.random().toString();
   chatAccountPubkey = await PublicKey.createWithSeed(
     wallet.publicKey,
     CHAT_SEED,
     programId
   );
+  console.log("new chat account pubkey", chatAccountPubkey.toBase58());
   const lamports = await connection.getMinimumBalanceForRentExemption(space);
   const instruction = SystemProgram.createAccountWithSeed({
     fromPubkey: wallet.publicKey,
@@ -46,9 +46,14 @@ export async function getChatMessageAccountPubkey(
     programId,
   });
   let trans = await setWalletTransaction(wallet, instruction);
+  console.log("setWalletTransaction", trans);
   let signature = await signAndSendTransaction(wallet, trans);
+  console.log("signAndSendTransaction", signature);
   let result = await connection.confirmTransaction(signature, "singleGossip");
   console.log("new chat account created", result);
-
+  localStorage.setItem(
+    wallet.publicKey.toBase58(),
+    chatAccountPubkey.toBase58()
+  );
   return chatAccountPubkey;
 }
