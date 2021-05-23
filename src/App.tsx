@@ -1,7 +1,7 @@
 import { Connection } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import DestinationAddressView from "./components/DestinationAddressView";
+import DestChatAddressView from "./components/DestChatAddressView";
 import MessageSender from "./components/MessageSender";
 import MoneySender from "./components/MoneySender";
 import MessagesView from "./components/MessagesView";
@@ -11,37 +11,35 @@ import {
 } from "./solana/transactions";
 import { initWallet, WalletAdapter } from "./solana/wallet";
 import messageService from "./solana/messages";
+import MyChatAddressView from "./components/MyChatAddressView";
 
 function App() {
-  const [destAddress, setDestAddress] = useState(
+  const [destWalletAddress, setDestWalletAddress] = useState(
     "8Ughmv792HAMJpES985tgrr4JAg8xgaGL3sMdpfx82w4"
   );
   const [transactions, setTransactions] = useState<
     Array<TransactionWithSignature>
   >([]);
   const conn = React.useRef<Connection>();
-  const wall = React.useRef<WalletAdapter>();
+  const [wall, setWall] = useState<WalletAdapter | undefined>();
   const midRow = React.useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     initWallet().then(([connection, wallet]: [Connection, WalletAdapter]) => {
       conn.current = connection;
-      wall.current = wallet;
+      setWall(wallet);
       console.log("wallet pubkey", wallet.publicKey);
       if (wallet.publicKey) {
         messageService
           .getMessageReceivedHistory(connection, wallet)
-          .then((receivedMessageContainer) => {
-            console.log("receivedMessages", receivedMessageContainer);
+          .then((receivedMessages) => {
+            console.log("receivedMessages", receivedMessages);
             messageService
-              .getMessageSentHistory(connection, destAddress)
-              .then((sentMessageContainer) => {
-                console.log("sentMessages", sentMessageContainer);
-                const allMessages = [
-                  ...receivedMessageContainer,
-                  ...sentMessageContainer,
-                ];
-                console.log("message history", allMessages);
+              .getMessageSentHistory(connection, destWalletAddress)
+              .then((sentMessages) => {
+                console.log("sentMessages", sentMessages);
+                const allMessages = [...receivedMessages, ...sentMessages];
+                console.log("all message history", allMessages);
               });
           })
           .catch((err) => console.log("error getMessageReceivedHistory", err));
@@ -58,7 +56,7 @@ function App() {
   };
 
   const didSendMoney = () => {
-    getTransactions(conn.current!, wall.current!.publicKey!).then((trans) => {
+    getTransactions(conn.current!, wall!.publicKey!).then((trans) => {
       setTransactions(trans);
     });
   };
@@ -67,13 +65,13 @@ function App() {
     <div className="screen-root app-body">
       <div className="app-body-top">
         <h3>Chat on Solana</h3>
-        <DestinationAddressView
-          title="Chat Destination Address"
-          address={destAddress}
-          setAddress={setDestAddress}
+        <MyChatAddressView address={wall?.publicKey?.toBase58() ?? ""} />
+        <DestChatAddressView
+          address={destWalletAddress}
+          setAddress={setDestWalletAddress}
         />
         <MoneySender
-          destinationAddressStr={destAddress}
+          destinationAddressStr={destWalletAddress}
           didSendMoney={didSendMoney}
         />
       </div>

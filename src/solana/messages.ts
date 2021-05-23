@@ -3,7 +3,7 @@ import {
   signAndSendTransaction,
   WalletAdapter,
 } from "./wallet";
-import { deserialize, serialize } from "borsh";
+import { serialize } from "borsh";
 // @ts-ignore
 import lo from "buffer-layout";
 import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
@@ -78,7 +78,7 @@ class MessageService {
     if (!sentAccount) {
       throw Error(`Account ${pubKeyStr} does not exist`);
     }
-    console.log("sentAccount.data", sentAccount.data.toJSON());
+    //console.log("sentAccount.data", sentAccount.data.toJSON());
     const archive_id = lo.seq(lo.cstr(), 43, "archive_id");
     const created_on = lo.seq(lo.cstr(), 16, "created_on");
     const dataStruct = lo.struct([archive_id, created_on], "ChatMessage");
