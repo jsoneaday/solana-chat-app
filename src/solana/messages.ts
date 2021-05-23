@@ -79,7 +79,10 @@ class MessageService {
       throw Error(`Account ${pubKeyStr} does not exist`);
     }
     console.log("sentAccount.data", sentAccount.data.toJSON());
-    const ds = lo.seq(lo.u8(), sentAccount.data.length);
+    const archive_id = lo.seq(lo.cstr(), lo.greedy(lo.u8().span), "archive_id");
+    const created_on = lo.seq(lo.cstr(), lo.greedy(lo.u8().span), "created_on");
+    const dataStruct = lo.struct([archive_id, created_on], "ChatMessage");
+    const ds = lo.seq(dataStruct, sentAccount.data.length);
     const messages = ds.decode(sentAccount.data);
     console.log("getAccountMessageHistory", messages);
     return messages;
