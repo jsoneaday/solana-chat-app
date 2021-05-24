@@ -16,11 +16,17 @@ import DestChatAddressView from "./components/DestChatAddressView";
 import MyChatAddressView from "./components/MyChatAddressView";
 import { getChatMessageAccountPubkey } from "./solana/accounts";
 
+const DEST_WALLET_ADDRESS_KEY = "destWalletAddress";
+const DEST_CHAT_ADDRESS_KEY = "destChatAddress";
 function App() {
   const [destWalletAddress, setDestWalletAddress] = useState(
-    "8Ughmv792HAMJpES985tgrr4JAg8xgaGL3sMdpfx82w4"
+    localStorage.getItem(DEST_WALLET_ADDRESS_KEY) ??
+      "8Ughmv792HAMJpES985tgrr4JAg8xgaGL3sMdpfx82w4"
   );
-  const [destChatAddress, setDestChatAddress] = useState("");
+  const [destChatAddress, setDestChatAddress] = useState(
+    localStorage.getItem(DEST_CHAT_ADDRESS_KEY) ??
+      "E2gLzzqVU9a89N9hWQw5biXzhb8N6xDcWP9pkjRkFRPX"
+  );
   const [transactions, setTransactions] = useState<
     Array<TransactionWithSignature>
   >([]);
@@ -29,11 +35,18 @@ function App() {
   const [myChatAddress, setMyChatAddress] = useState("");
   const midRow = React.useRef<HTMLDivElement | null>(null);
 
+  const setDestinationWalletAddress = (address: string) => {
+    localStorage.setItem(DEST_WALLET_ADDRESS_KEY, address);
+    setDestWalletAddress(address);
+  };
+  const setDestinationChatAddress = (address: string) => {
+    localStorage.setItem(DEST_CHAT_ADDRESS_KEY, address);
+    setDestChatAddress(address);
+  };
   useEffect(() => {
     initWallet().then(([connection, wallet]: [Connection, WalletAdapter]) => {
       conn.current = connection;
       setMyWallet(wallet);
-      console.log("wallet pubkey", wallet.publicKey);
       if (wallet.publicKey) {
         getChatMessageAccountPubkey(
           connection,
@@ -51,8 +64,6 @@ function App() {
                 .getMessageSentHistory(connection, destWalletAddress)
                 .then((sentMessages) => {
                   console.log("sentMessages", sentMessages);
-                  const allMessages = [...receivedMessages, ...sentMessages];
-                  console.log("all message history", allMessages);
                 });
             })
             .catch((err) =>
@@ -65,9 +76,7 @@ function App() {
 
   const setMidRowScrollTop = (height: number) => {
     if (midRow.current) {
-      console.log("total children height", height);
       midRow.current.scrollTop = height;
-      console.log("scrollTop", midRow.current.scrollTop);
     }
   };
 
@@ -84,7 +93,7 @@ function App() {
         <MyWalletAddressView address={myWallet?.publicKey?.toBase58() ?? ""} />
         <DestWalletAddressView
           address={destWalletAddress}
-          setAddress={setDestWalletAddress}
+          setAddress={setDestinationWalletAddress}
         />
         <MoneySender
           destinationAddressStr={destWalletAddress}
@@ -104,7 +113,7 @@ function App() {
         />
         <DestChatAddressView
           address={destChatAddress}
-          setAddress={setDestChatAddress}
+          setAddress={setDestinationChatAddress}
         />
         <MessageSender
           connection={conn.current}

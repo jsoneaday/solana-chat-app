@@ -1,5 +1,4 @@
 .msg-container {
-  max-width: 75%;
   border: var(--panel-border);
   border-radius: var(--panel-border-radius);
   padding: var(--panel-padding);
@@ -8,10 +7,4 @@
 .msg-input {
   width: 75%;
   margin-right: 0.5em;
-}
-
-@media screen and (orientation: portrait) and (max-width: 768px) {
-  .msg-container {
-    max-width: 100%;
-  }
 }

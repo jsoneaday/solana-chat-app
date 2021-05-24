@@ -13,7 +13,6 @@ const MessagesView: FC<MessagesViewProps> = ({
 }) => {
   const totalItemsHeight = React.useRef(0);
   const incrementItemsHeight = (height: number) => {
-    console.log("item height", height);
     totalItemsHeight.current += height;
   };
   const view = transactions.map((trans) => {

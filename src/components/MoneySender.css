@@ -1,5 +1,4 @@
 .send-container {
-  max-width: 75%;
   border: var(--panel-border);
   border-radius: var(--panel-border-radius);
   padding: var(--panel-padding);
@@ -38,10 +37,4 @@
   grid-column: 2;
   grid-row: 3;
   justify-self: end;
-}
-
-@media screen and (orientation: portrait) and (max-width: 768px) {
-  .send-container {
-    max-width: 100%;
-  }
 }

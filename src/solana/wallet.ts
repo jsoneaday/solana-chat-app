@@ -22,16 +22,15 @@ const wallet: WalletAdapter = new Wallet("https://www.sollet.io", cluster);
 
 export async function initWallet(): Promise<[Connection, WalletAdapter]> {
   await wallet.connect();
-  console.log("wallet publicKey", wallet?.publicKey?.toBase58());
   return [connection, wallet];
 }
 
 export async function sendMoney(
   destPubkeyStr: string,
-  lamports: number = 500 * 1000000
+  lamports: number = 500 * 1000000 // about half a SOL
 ) {
   try {
-    console.log("starting sendMoney");
+    console.log("start sendMoney");
     const destPubkey = new PublicKey(destPubkeyStr);
     const walletAccountInfo = await connection.getAccountInfo(
       wallet!.publicKey!
@@ -44,13 +43,13 @@ export async function sendMoney(
     const instruction = SystemProgram.transfer({
       fromPubkey: wallet!.publicKey!,
       toPubkey: destPubkey,
-      lamports, // about half a SOL
+      lamports,
     });
     let trans = await setWalletTransaction(wallet, instruction);
 
     let signature = await signAndSendTransaction(wallet, trans);
     let result = await connection.confirmTransaction(signature, "singleGossip");
-    console.log("money sent", result);
+    console.log("end sendMoney", result);
   } catch (e) {
     console.warn("Failed", e);
   }
@@ -64,7 +63,6 @@ export async function setWalletTransaction(
   transaction.add(instruction);
   transaction.feePayer = wallet!.publicKey!;
   let hash = await connection.getRecentBlockhash();
-  console.log("blockhash", hash);
   transaction.recentBlockhash = hash.blockhash;
   return transaction;
 }
@@ -80,7 +78,7 @@ export async function signAndSendTransaction(
     let signature = await connection.sendRawTransaction(
       signedTrans.serialize()
     );
-    console.log("sent raw transaction");
+    console.log("end signAndSendTransaction");
     return signature;
   } catch (err) {
     console.log("signAndSendTransaction error", err);

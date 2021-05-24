@@ -76,7 +76,6 @@ class MessageService {
     pubKeyStr: string
   ): Promise<Array<ChatMessage>> {
     const sentPubkey = new PublicKey(pubKeyStr);
-    console.log("sentPubkey", sentPubkey);
     const sentAccount = await connection.getAccountInfo(sentPubkey);
     // get and deserialize solana account data and receive txid
     // go to arweave and query using these txid
@@ -84,13 +83,11 @@ class MessageService {
     if (!sentAccount) {
       throw Error(`Account ${pubKeyStr} does not exist`);
     }
-    //console.log("sentAccount.data", sentAccount.data.toJSON());
     const archive_id = lo.seq(lo.cstr(), 43, "archive_id");
     const created_on = lo.seq(lo.cstr(), 16, "created_on");
     const dataStruct = lo.struct([archive_id, created_on], "ChatMessage");
     const ds = lo.seq(dataStruct, sentAccount.data.length);
     const messages = ds.decode(sentAccount.data);
-    console.log("getAccountMessageHistory", messages);
     return messages;
   }
 
@@ -115,7 +112,6 @@ class MessageService {
       wallet,
       messageService.CHAT_MESSAGES_SIZE
     );
-    console.log("walletChatAccountPubkey", walletChatAccountPubkey);
     const messages = await this.getAccountMessageHistory(
       connection,
       walletChatAccountPubkey.toBase58()
@@ -130,6 +126,7 @@ class MessageService {
     destPubkeyStr: string,
     msg: string
   ): Promise<RpcResponseAndContext<SignatureResult>> {
+    console.log("start sendMessage");
     const destPubkey = new PublicKey(destPubkeyStr);
 
     const messageObj = new ChatMessage();
@@ -146,7 +143,7 @@ class MessageService {
       signature,
       "singleGossip"
     );
-    console.log("sendMessage success", result);
+    console.log("end sendMessage", result);
     return result;
   }
 
@@ -158,15 +155,16 @@ class MessageService {
 
   // get value and add dummy values
   private getCreatedOn(): string {
-    const now = Date.UTC.valueOf.toString();
+    const now = new Date().getUTCMilliseconds().toString();
     const total = DUMMY_CREATED_ON.length;
     const diff = total - now.length;
     let prefix = "";
     for (let i = 0; i < diff; i++) {
       prefix += "0";
     }
-    const result = prefix + now;
-    return result;
+    const created_on = prefix + now;
+    console.log("created_on", created_on);
+    return created_on;
   }
 }
 

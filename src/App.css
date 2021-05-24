@@ -7,7 +7,7 @@
   min-height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto minmax(300px, 350px) auto;
+  grid-template-rows: 250px minmax(380px, 600px) 200px;
   gap: 1em 0;
   padding-right: 0.5em;
   padding-left: 0.5em;
@@ -27,6 +27,9 @@
 }
 
 @media screen and (orientation: portrait) and (max-width: 375px) {
+  .app-body {
+    grid-template-rows: 250px minmax(380px, auto) 200px;
+  }
   .app-body-mid {
     max-width: 360px;
   }
