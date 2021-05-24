@@ -6,7 +6,13 @@ import {
 import { serialize } from "borsh";
 // @ts-ignore
 import lo from "buffer-layout";
-import { Connection, PublicKey, TransactionInstruction } from "@solana/web3.js";
+import {
+  Connection,
+  PublicKey,
+  RpcResponseAndContext,
+  SignatureResult,
+  TransactionInstruction,
+} from "@solana/web3.js";
 import { getChatMessageAccountPubkey } from "./accounts";
 import { programId } from "./program";
 
@@ -123,8 +129,9 @@ class MessageService {
     wallet: WalletAdapter,
     destPubkeyStr: string,
     msg: string
-  ): Promise<void> {
+  ): Promise<RpcResponseAndContext<SignatureResult>> {
     const destPubkey = new PublicKey(destPubkeyStr);
+
     const messageObj = new ChatMessage();
     messageObj.archive_id = this.getTxIdFromArweave(msg);
     messageObj.created_on = this.getCreatedOn();
@@ -140,6 +147,7 @@ class MessageService {
       "singleGossip"
     );
     console.log("sendMessage success", result);
+    return result;
   }
 
   private getTxIdFromArweave(msg: string): string {
@@ -148,6 +156,7 @@ class MessageService {
     return txid;
   }
 
+  // get value and add dummy values
   private getCreatedOn(): string {
     const now = Date.UTC.valueOf.toString();
     const total = DUMMY_CREATED_ON.length;

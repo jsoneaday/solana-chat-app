@@ -65,10 +65,14 @@ function App() {
     <div className="screen-root app-body">
       <div className="app-body-top">
         <h3>Chat on Solana</h3>
-        <MyChatAddressView address={wall?.publicKey?.toBase58() ?? ""} />
+        <MyChatAddressView
+          address={wall?.publicKey?.toBase58() ?? ""}
+          readOnly={true}
+        />
         <DestChatAddressView
           address={destWalletAddress}
           setAddress={setDestWalletAddress}
+          readOnly={false}
         />
         <MoneySender
           destinationAddressStr={destWalletAddress}
@@ -82,7 +86,11 @@ function App() {
         />
       </div>
       <div className="app-body-bottom">
-        <MessageSender />
+        <MessageSender
+          connection={conn.current}
+          wallet={wall}
+          destPubkeyStr={destWalletAddress}
+        />
       </div>
     </div>
   );

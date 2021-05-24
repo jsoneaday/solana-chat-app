@@ -1,16 +1,38 @@
-import React, { useState } from "react";
+import { Connection } from "@solana/web3.js";
+import React, { FC, useState } from "react";
+import messageService from "../solana/messages";
+import { WalletAdapter } from "../solana/wallet";
 import "./MessageSender.css";
 
-const MessageSender = () => {
+interface MessageSenderProps {
+  connection?: Connection;
+  wallet?: WalletAdapter;
+  destPubkeyStr: string;
+}
+
+const MessageSender: FC<MessageSenderProps> = ({
+  connection,
+  wallet,
+  destPubkeyStr,
+}) => {
   const [message, setMessage] = useState("");
   const onChangeMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
-  const onClickSubmit = (
+  const onClickSubmit = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    // send message here
+    if (!connection || !wallet) {
+      return;
+    }
+    const result = await messageService.sendMessage(
+      connection,
+      wallet,
+      destPubkeyStr,
+      message
+    );
+    console.log("onClickSubmit message sent successfully", result);
   };
 
   return (

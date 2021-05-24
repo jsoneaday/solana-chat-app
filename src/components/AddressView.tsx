@@ -4,15 +4,22 @@ import "./AddressView.css";
 export interface ChatAddressViewProps {
   address: string;
   setAddress?: (address: string) => void;
+  readOnly: boolean;
 }
 
 export interface AddressViewProps {
   title: string;
   address: string;
   setAddress?: (address: string) => void;
+  readOnly: boolean;
 }
 
-const AddressView: FC<AddressViewProps> = ({ title, address, setAddress }) => {
+const AddressView: FC<AddressViewProps> = ({
+  title,
+  address,
+  setAddress,
+  readOnly,
+}) => {
   const onChangeAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAddress && setAddress(e.target.value ?? "");
   };
@@ -20,7 +27,12 @@ const AddressView: FC<AddressViewProps> = ({ title, address, setAddress }) => {
   return (
     <div className="address-container">
       <strong style={{ marginRight: "0.5em" }}>{title}</strong>
-      <input type="text" value={address} onChange={onChangeAddress} />
+      <input
+        type="text"
+        value={address}
+        onChange={onChangeAddress}
+        readOnly={readOnly}
+      />
     </div>
   );
 };
