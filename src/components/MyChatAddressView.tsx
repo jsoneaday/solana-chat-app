@@ -1,17 +1,16 @@
 import React from "react";
-import AddressView, { ChatAddressViewProps } from "./AddressView";
+import AddressView, { WrapperAddressViewProps } from "./AddressView";
 
-const MyChatAddressView: React.FC<ChatAddressViewProps> = ({
+const MyChatAddressView: React.FC<WrapperAddressViewProps> = ({
   address,
   setAddress,
-  readOnly,
 }) => {
   return (
     <AddressView
-      title="My Wallet Address"
+      title="My Chat Address"
       address={address}
       setAddress={setAddress}
-      readOnly={readOnly}
+      readOnly={true}
     />
   );
 };

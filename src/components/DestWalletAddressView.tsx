@@ -1,13 +1,13 @@
 import React from "react";
 import AddressView, { WrapperAddressViewProps } from "./AddressView";
 
-const DestChatAddressView: React.FC<WrapperAddressViewProps> = ({
+const DestWalletAddressView: React.FC<WrapperAddressViewProps> = ({
   address,
   setAddress,
 }) => {
   return (
     <AddressView
-      title="Dest. Chat Address"
+      title="Dest. Wallet Address"
       address={address}
       setAddress={setAddress}
       readOnly={false}
@@ -15,4 +15,4 @@ const DestChatAddressView: React.FC<WrapperAddressViewProps> = ({
   );
 };
 
-export default DestChatAddressView;
+export default DestWalletAddressView;

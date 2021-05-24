@@ -46,7 +46,7 @@ const ChatMessageSchema = new Map([
 ]);
 
 class MessageService {
-  static CHAT_MESSAGES_SIZE: number = 0;
+  CHAT_MESSAGES_SIZE: number = 0;
   setChatMessagesDataSize() {
     const sampleChatMessages: Array<ChatMessage> =
       this.getDefaultChatMessages();
@@ -55,7 +55,7 @@ class MessageService {
     for (let i = 0; i < sampleChatMessages.length; i++) {
       length += serialize(ChatMessageSchema, sampleChatMessages[0]).length;
     }
-    MessageService.CHAT_MESSAGES_SIZE = length;
+    this.CHAT_MESSAGES_SIZE = length;
   }
 
   constructor() {
@@ -113,7 +113,7 @@ class MessageService {
     const walletChatAccountPubkey = await getChatMessageAccountPubkey(
       connection,
       wallet,
-      MessageService.CHAT_MESSAGES_SIZE
+      messageService.CHAT_MESSAGES_SIZE
     );
     console.log("walletChatAccountPubkey", walletChatAccountPubkey);
     const messages = await this.getAccountMessageHistory(

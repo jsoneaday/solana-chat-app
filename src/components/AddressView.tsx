@@ -1,10 +1,9 @@
 import React, { FC } from "react";
 import "./AddressView.css";
 
-export interface ChatAddressViewProps {
+export interface WrapperAddressViewProps {
   address: string;
   setAddress?: (address: string) => void;
-  readOnly: boolean;
 }
 
 export interface AddressViewProps {
