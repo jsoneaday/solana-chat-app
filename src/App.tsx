@@ -52,11 +52,11 @@ function App() {
           connection,
           wallet,
           messageService.CHAT_MESSAGES_SIZE
-        ).then((chatPubkey) => {
-          setMyChatAddress(chatPubkey.toBase58());
+        ).then((walletChatPubkey) => {
+          setMyChatAddress(walletChatPubkey.toBase58());
 
           messageService
-            .getMessageReceivedHistory(connection, wallet)
+            .getMessageReceivedHistory(connection, walletChatPubkey.toBase58())
             .then((receivedMessages) => {
               console.log("receivedMessages", receivedMessages);
 

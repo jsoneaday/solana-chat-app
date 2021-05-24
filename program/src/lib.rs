@@ -8,6 +8,7 @@ use solana_program::{
     program_error::ProgramError,
     pubkey::Pubkey,
 };
+use std::io::ErrorKind::InvalidData;
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct ChatMessage {
@@ -38,8 +39,6 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8]
 ) -> ProgramResult {
-    msg!("Start program to save message.");
-
     let accounts_iter = &mut accounts.iter();
     let account = next_account_info(accounts_iter)?;
     if account.owner != program_id {
@@ -54,15 +53,22 @@ pub fn process_instruction(
     })?;
     msg!("Instruction_data message object {:?}", instruction_data_message);
 
-    let mut existing_data_messages = <Vec<ChatMessage>>::try_from_slice(&account.data.borrow_mut()).map_err(|err| {
-        msg!("Failed to decode account data. {:?}", err);
-        ProgramError::InvalidInstructionData
-    })?;
+    let mut existing_data_messages = match <Vec<ChatMessage>>::try_from_slice(&account.data.borrow_mut()) {
+        Ok(data) => data,
+        Err(err) => {
+            if err.kind() == InvalidData {
+                msg!("InvalidData so initializing account data");
+                get_init_chat_messages()
+            } else {
+                panic!("Unknown error decoding account data {:?}", err)
+            }
+        }
+    };
     let index = existing_data_messages.iter().position(|p| p.archive_id == String::from(DUMMY_TX_ID)).unwrap(); // find first dummy data entry
-    msg!("Existing archive_id {}", existing_data_messages[index].archive_id);
+    msg!("Found index {}", index);
     existing_data_messages[index] = instruction_data_message; // set dummy data to new entry
-    msg!("Set existing_data_message");
     let updated_data = existing_data_messages.try_to_vec().expect("Failed to encode data."); // set messages object back to vector data
+    msg!("Final existing_data_messages[index] {:?}", existing_data_messages[index]);
 
     // data algorithm for storing data into account and then archiving into Arweave
     // 1. Each ChatMessage object will be prepopulated for txt field having 43 characters (length of a arweave tx).
@@ -91,15 +97,15 @@ mod test {
         let program_id = Pubkey::default();
         let key = Pubkey::default();
         let mut lamports = 0;
-        let data = get_init_chat_messages(); // vec![0; get_init_chat_messages().len()];
-        let mut data_data = data.try_to_vec().unwrap();
+        let messages = get_init_chat_messages(); 
+        let mut data = messages.try_to_vec().unwrap();
         let owner = Pubkey::default();
         let account = AccountInfo::new(
             &key,
             false,
             true,
             &mut lamports,
-            &mut data_data,
+            &mut data,
             &owner,
             false,
             Epoch::default(),

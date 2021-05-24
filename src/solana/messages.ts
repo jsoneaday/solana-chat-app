@@ -13,7 +13,6 @@ import {
   SignatureResult,
   TransactionInstruction,
 } from "@solana/web3.js";
-import { getChatMessageAccountPubkey } from "./accounts";
 import { programId } from "./program";
 
 const CHAT_MESSAGE_ELEMENTS = 20;
@@ -53,9 +52,9 @@ class MessageService {
 
     let length = 0;
     for (let i = 0; i < sampleChatMessages.length; i++) {
-      length += serialize(ChatMessageSchema, sampleChatMessages[0]).length;
+      length += serialize(ChatMessageSchema, sampleChatMessages[i]).length;
     }
-    this.CHAT_MESSAGES_SIZE = length;
+    this.CHAT_MESSAGES_SIZE = length + 4; // plus 4 due to some data diffs between client and program
   }
 
   constructor() {
@@ -93,28 +92,23 @@ class MessageService {
 
   async getMessageSentHistory(
     connection: Connection,
-    sentPubkeyStr: string
+    sentChatPubkeyStr: string
   ): Promise<Array<ChatMessage>> {
     const messages = await this.getAccountMessageHistory(
       connection,
-      sentPubkeyStr
+      sentChatPubkeyStr
     );
     return messages;
   }
 
   async getMessageReceivedHistory(
     connection: Connection,
-    wallet: WalletAdapter
+    walletChatPubkeyStr: string
   ): Promise<Array<ChatMessage>> {
     console.log("start getMessageReceivedHistory");
-    const walletChatAccountPubkey = await getChatMessageAccountPubkey(
-      connection,
-      wallet,
-      messageService.CHAT_MESSAGES_SIZE
-    );
     const messages = await this.getAccountMessageHistory(
       connection,
-      walletChatAccountPubkey.toBase58()
+      walletChatPubkeyStr
     );
     console.log("end getMessageReceivedHistory");
     return messages;
