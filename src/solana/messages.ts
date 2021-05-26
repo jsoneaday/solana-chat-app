@@ -3,7 +3,7 @@ import {
   signAndSendTransaction,
   WalletAdapter,
 } from "./wallet";
-import { deserialize, serialize } from "borsh";
+import { serialize } from "borsh";
 // @ts-ignore
 import lo from "buffer-layout";
 import {
@@ -40,15 +40,6 @@ const ChatMessageSchema = new Map([
         ["archive_id", "String"],
         ["created_on", "String"],
       ],
-    },
-  ],
-]);
-
-const ChatMessageVecSchema = new Map([
-  [
-    ChatMessage,
-    {
-      kind: "vec",
     },
   ],
 ]);

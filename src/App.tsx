@@ -4,7 +4,7 @@ import "./App.css";
 import DestWalletAddressView from "./components/DestWalletAddressView";
 import MessageSender from "./components/MessageSender";
 import MoneySender from "./components/MoneySender";
-import MessagesView from "./components/MessagesView";
+import TransactionView from "./components/TransactionView";
 import {
   getTransactions,
   TransactionWithSignature,
@@ -95,7 +95,7 @@ function App() {
         />
       </div>
       <div ref={midRow} className="app-body-mid">
-        <MessagesView
+        <TransactionView
           transactions={transactions}
           setMidRowScrollTop={setMidRowScrollTop}
         />
