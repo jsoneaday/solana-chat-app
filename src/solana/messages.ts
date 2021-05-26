@@ -1,5 +1,5 @@
 import {
-  setWalletTransaction,
+  setPayerAndBlockhashTransaction,
   signAndSendTransaction,
   WalletAdapter,
 } from "./wallet";
@@ -15,7 +15,7 @@ import {
 } from "@solana/web3.js";
 import { programId } from "./program";
 
-const CHAT_MESSAGE_ELEMENTS = 20;
+const CHAT_MESSAGE_ELEMENTS_COUNT = 20;
 const DUMMY_TX_ID = "0000000000000000000000000000000000000000000";
 const DUMMY_CREATED_ON = "0000000000000000";
 class ChatMessage {
@@ -63,7 +63,7 @@ class MessageService {
 
   private getDefaultChatMessages(): Array<ChatMessage> {
     const chatMessages: Array<ChatMessage> = [];
-    for (let i = 0; i < CHAT_MESSAGE_ELEMENTS; i++) {
+    for (let i = 0; i < CHAT_MESSAGE_ELEMENTS_COUNT; i++) {
       chatMessages.push(new ChatMessage());
     }
 
@@ -82,10 +82,10 @@ class MessageService {
     if (!sentAccount) {
       throw Error(`Account ${pubKeyStr} does not exist`);
     }
-    const archive_id = lo.seq(lo.cstr(), 43, "archive_id");
-    const created_on = lo.seq(lo.cstr(), 16, "created_on");
+    const archive_id = lo.cstr("archive_id");
+    const created_on = lo.cstr("created_on");
     const dataStruct = lo.struct([archive_id, created_on], "ChatMessage");
-    const ds = lo.seq(dataStruct, sentAccount.data.length);
+    const ds = lo.seq(dataStruct, CHAT_MESSAGE_ELEMENTS_COUNT);
     const messages = ds.decode(sentAccount.data);
     return messages;
   }
@@ -98,6 +98,7 @@ class MessageService {
       connection,
       sentChatPubkeyStr
     );
+    console.log("getMessageSentHistory", messages);
     return messages;
   }
 
@@ -105,12 +106,11 @@ class MessageService {
     connection: Connection,
     walletChatPubkeyStr: string
   ): Promise<Array<ChatMessage>> {
-    console.log("start getMessageReceivedHistory");
     const messages = await this.getAccountMessageHistory(
       connection,
       walletChatPubkeyStr
     );
-    console.log("end getMessageReceivedHistory");
+    console.log("getMessageReceivedHistory", messages);
     return messages;
   }
 
@@ -131,7 +131,10 @@ class MessageService {
       programId,
       data: Buffer.from(serialize(ChatMessageSchema, messageObj)),
     });
-    const trans = await setWalletTransaction(wallet, messageInstruction);
+    const trans = await setPayerAndBlockhashTransaction(
+      wallet,
+      messageInstruction
+    );
     const signature = await signAndSendTransaction(wallet, trans);
     const result = await connection.confirmTransaction(
       signature,
@@ -143,13 +146,19 @@ class MessageService {
 
   private getTxIdFromArweave(msg: string): string {
     // save message to arweave and get back txid;
-    const txid = DUMMY_TX_ID;
+    let txid = "";
+    const dummyLength = DUMMY_TX_ID.length - msg.length;
+    for (let i = 0; i < dummyLength; i++) {
+      txid += "0";
+    }
+    txid += msg;
     return txid;
   }
 
   // get value and add dummy values
   private getCreatedOn(): string {
     const now = new Date().getUTCMilliseconds().toString();
+    console.log("now", now);
     const total = DUMMY_CREATED_ON.length;
     const diff = total - now.length;
     let prefix = "";

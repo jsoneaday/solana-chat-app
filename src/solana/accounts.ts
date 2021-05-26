@@ -1,7 +1,7 @@
 import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
 import { programId } from "./program";
 import {
-  setWalletTransaction,
+  setPayerAndBlockhashTransaction,
   signAndSendTransaction,
   WalletAdapter,
 } from "./wallet";
@@ -45,8 +45,8 @@ export async function getChatMessageAccountPubkey(
     space,
     programId,
   });
-  let trans = await setWalletTransaction(wallet, instruction);
-  console.log("setWalletTransaction", trans);
+  let trans = await setPayerAndBlockhashTransaction(wallet, instruction);
+  console.log("setPayerAndBlockhashTransaction", trans);
   let signature = await signAndSendTransaction(wallet, trans);
   console.log("signAndSendTransaction", signature);
   let result = await connection.confirmTransaction(signature, "singleGossip");

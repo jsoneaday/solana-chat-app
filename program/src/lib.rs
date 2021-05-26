@@ -16,6 +16,11 @@ pub struct ChatMessage {
     pub created_on: String
 }
 
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct ChatMessageWrapper {
+    pub archive_ids: Vec<ChatMessage>
+}
+
 // example arweave tx (length 43)
 // 1seRanklLU_1VTGkEk7P0xAwMJfA7owA1JHW5KyZKlY
 // ReUohI9tEmXQ6EN9H9IkRjY9bSdgql_OdLUCOeMEte0
@@ -133,19 +138,5 @@ mod test {
             String::from(created_on).eq(test_created_on),
             true
         );
-        // process_instruction(&program_id, &accounts, &instruction_data).unwrap();
-        // assert_eq!(
-        //     ChatMessageContainer::try_from_slice(&accounts[0].data.borrow())
-        //         .unwrap()
-        //         .txt,
-        //     1
-        // );
-        // process_instruction(&program_id, &accounts, &instruction_data).unwrap();
-        // assert_eq!(
-        //     ChatMessageContainer::try_from_slice(&accounts[0].data.borrow())
-        //         .unwrap()
-        //         .txt,
-        //     2
-        // );
     }
 }

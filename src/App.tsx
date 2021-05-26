@@ -51,20 +51,15 @@ function App() {
         getChatMessageAccountPubkey(
           connection,
           wallet,
-          messageService.CHAT_MESSAGES_SIZE
+          messageService.CHAT_MESSAGES_SIZE,
+          true
         ).then((walletChatPubkey) => {
           setMyChatAddress(walletChatPubkey.toBase58());
 
           messageService
             .getMessageReceivedHistory(connection, walletChatPubkey.toBase58())
             .then((receivedMessages) => {
-              console.log("receivedMessages", receivedMessages);
-
-              messageService
-                .getMessageSentHistory(connection, destWalletAddress)
-                .then((sentMessages) => {
-                  console.log("sentMessages", sentMessages);
-                });
+              messageService.getMessageSentHistory(connection, destChatAddress);
             })
             .catch((err) =>
               console.log("error getMessageReceivedHistory", err)
