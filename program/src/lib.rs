@@ -83,7 +83,8 @@ pub fn process_instruction(
     let data = &mut &mut account.data.borrow_mut();
     msg!("Attempting save data.");
     data[..updated_data.len()].copy_from_slice(&updated_data);    
-    msg!("ChatMessage has been saved to account data.");
+    let saved_data = <Vec<ChatMessage>>::try_from_slice(data)?;
+    msg!("ChatMessage has been saved to account data. {:?}", saved_data[index]);
     sol_log_compute_units();
 
     msg!("End program.");

@@ -51,8 +51,7 @@ function App() {
         getChatMessageAccountPubkey(
           connection,
           wallet,
-          messageService.CHAT_MESSAGES_SIZE,
-          true
+          messageService.CHAT_MESSAGES_SIZE
         ).then((walletChatPubkey) => {
           setMyChatAddress(walletChatPubkey.toBase58());
 

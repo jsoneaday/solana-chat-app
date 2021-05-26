@@ -3,7 +3,7 @@ import {
   signAndSendTransaction,
   WalletAdapter,
 } from "./wallet";
-import { serialize } from "borsh";
+import { deserialize, serialize } from "borsh";
 // @ts-ignore
 import lo from "buffer-layout";
 import {
@@ -40,6 +40,15 @@ const ChatMessageSchema = new Map([
         ["archive_id", "String"],
         ["created_on", "String"],
       ],
+    },
+  ],
+]);
+
+const ChatMessageVecSchema = new Map([
+  [
+    ChatMessage,
+    {
+      kind: "vec",
     },
   ],
 ]);
@@ -84,7 +93,10 @@ class MessageService {
     }
     const archive_id = lo.cstr("archive_id");
     const created_on = lo.cstr("created_on");
-    const dataStruct = lo.struct([archive_id, created_on], "ChatMessage");
+    const dataStruct = lo.struct(
+      [archive_id, lo.seq(lo.u8(), 3), created_on, lo.seq(lo.u8(), 3)],
+      "ChatMessage"
+    );
     const ds = lo.seq(dataStruct, CHAT_MESSAGE_ELEMENTS_COUNT);
     const messages = ds.decode(sentAccount.data);
     return messages;
