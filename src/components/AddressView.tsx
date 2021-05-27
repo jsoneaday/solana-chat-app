@@ -24,7 +24,7 @@ const AddressView: FC<AddressViewProps> = ({
   };
 
   return (
-    <div className="address-container">
+    <div className="panel address-container">
       <strong style={{ marginRight: "0.5em" }}>{title}</strong>
       <input
         type="text"

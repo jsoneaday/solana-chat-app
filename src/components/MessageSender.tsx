@@ -36,7 +36,7 @@ const MessageSender: FC<MessageSenderProps> = ({
   };
 
   return (
-    <div className="msg-container">
+    <div className="panel">
       <input
         className="msg-input"
         type="text"

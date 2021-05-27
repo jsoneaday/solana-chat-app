@@ -27,7 +27,7 @@ const MoneySender: React.FC<MoneySenderProps> = ({
   };
 
   return (
-    <form className="send-container">
+    <form className="panel">
       <div className="send-inputs">
         <strong className="send-top-left">Send Money</strong>
         <div className="send-mid-left">

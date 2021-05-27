@@ -53,7 +53,7 @@ const TransactionItemView: FC<TransactionItemViewProps> = ({
   });
 
   return (
-    <ul ref={itemHeight} className="trans-item trans-meta">
+    <ul ref={itemHeight} className="panel trans-meta">
       <li key={signature + "signature"}>
         <label>Tx:</label> &nbsp;
         {signature}

@@ -1,9 +1,3 @@
-.trans-item {
-  border: var(--panel-border);
-  border-radius: var(--panel-border-radius);
-  padding: var(--panel-padding);
-}
-
 .trans-meta {
   list-style-type: none;
 }
