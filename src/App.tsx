@@ -61,41 +61,52 @@ function App() {
         ).then((walletChatPubkey) => {
           setMyChatAddress(walletChatPubkey.toBase58());
 
-          messageService
-            .getMessageReceivedHistory(connection, walletChatPubkey.toBase58())
-            .then((receivedMessages) => {
-              const receivedMessagesProps = receivedMessages
-                .filter((msg) => msg.archive_id && msg.created_on)
-                .map((msg) => {
-                  return new MessageItemViewProps(
-                    msg.archive_id,
-                    msg.created_on,
-                    false
-                  );
-                });
-              setReceivedMessages(receivedMessagesProps);
-              messageService
-                .getMessageSentHistory(connection, destChatAddress)
-                .then((sentMessages) => {
-                  const sentMessagesProps = sentMessages
-                    .filter((msg) => msg.archive_id && msg.created_on)
-                    .map((msg) => {
-                      return new MessageItemViewProps(
-                        msg.archive_id,
-                        msg.created_on,
-                        true
-                      );
-                    });
-                  setSentMessages(sentMessagesProps);
-                });
-            })
-            .catch((err) =>
-              console.log("error getMessageReceivedHistory", err)
-            );
+          getMessagesInternal(connection, walletChatPubkey.toBase58());
         });
       }
     });
   }, []);
+
+  const getMessages = () => {
+    if (conn.current) {
+      getMessagesInternal(conn.current, myChatAddress);
+    }
+  };
+
+  const getMessagesInternal = (
+    connection: Connection,
+    walletChatPubkeyStr: string
+  ) => {
+    messageService
+      .getMessageReceivedHistory(connection, walletChatPubkeyStr)
+      .then((receivedMessages) => {
+        const receivedMessagesProps = receivedMessages
+          .filter((msg) => msg.archive_id && msg.created_on)
+          .map((msg) => {
+            return new MessageItemViewProps(
+              msg.archive_id,
+              msg.created_on,
+              false
+            );
+          });
+        setReceivedMessages(receivedMessagesProps);
+        messageService
+          .getMessageSentHistory(connection, destChatAddress)
+          .then((sentMessages) => {
+            const sentMessagesProps = sentMessages
+              .filter((msg) => msg.archive_id && msg.created_on)
+              .map((msg) => {
+                return new MessageItemViewProps(
+                  msg.archive_id,
+                  msg.created_on,
+                  true
+                );
+              });
+            setSentMessages(sentMessagesProps);
+          });
+      })
+      .catch((err) => console.log("error getMessageReceivedHistory", err));
+  };
 
   const setMidRowScrollTop = (height: number) => {
     if (midRow.current) {
@@ -139,6 +150,7 @@ function App() {
           connection={conn.current}
           wallet={myWallet}
           destPubkeyStr={destChatAddress}
+          getMessages={getMessages}
         />
       </div>
     </div>

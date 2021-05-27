@@ -160,7 +160,7 @@ class MessageService {
 
   // get value and add dummy values
   private getCreatedOn(): string {
-    const now = new Date().getUTCMilliseconds().toString();
+    const now = Date.now().toString();
     console.log("now", now);
     const total = DUMMY_CREATED_ON.length;
     const diff = total - now.length;

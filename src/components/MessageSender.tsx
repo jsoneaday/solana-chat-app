@@ -8,12 +8,14 @@ interface MessageSenderProps {
   connection?: Connection;
   wallet?: WalletAdapter;
   destPubkeyStr: string;
+  getMessages: () => void;
 }
 
 const MessageSender: FC<MessageSenderProps> = ({
   connection,
   wallet,
   destPubkeyStr,
+  getMessages,
 }) => {
   const [message, setMessage] = useState("");
   const onChangeMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +35,7 @@ const MessageSender: FC<MessageSenderProps> = ({
       message
     );
     console.log("onClickSubmit message sent successfully", result);
+    getMessages();
   };
 
   return (

@@ -1,11 +1,12 @@
 .messages-view-container {
-  max-width: 200px;
+  max-width: 350px;
   word-wrap: break-word;
   margin-bottom: 2em;
 }
 
 .messages-view-sent {
-  float: right;
+  margin-right: 0;
+  margin-left: auto;
   border-top-right-radius: 0;
   border-top-left-radius: var(--panel-border-radius);
   border-bottom-left-radius: var(--panel-border-radius);
@@ -13,9 +14,16 @@
 }
 
 .messages-view-received {
-  float: left;
+  margin-left: 0;
+  margin-right: auto;
   border-top-left-radius: 0;
   border-top-right-radius: var(--panel-border-radius);
   border-bottom-left-radius: var(--panel-border-radius);
   border-bottom-right-radius: var(--panel-border-radius);
+}
+
+@media screen and (orientation: portrait) and (max-width: 375px) {
+  .messages-view-container {
+    max-width: 175px;
+  }
 }

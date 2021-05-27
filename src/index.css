@@ -1,7 +1,7 @@
 :root {
   --panel-border: solid 1px gray;
   --panel-border-radius: 0.4rem;
-  --panel-padding: 0.5rem;
+  --panel-padding: 0.6rem;
 }
 
 html {
