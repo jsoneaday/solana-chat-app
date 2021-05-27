@@ -1,0 +1,21 @@
+.messages-view-container {
+  max-width: 200px;
+  word-wrap: break-word;
+  margin-bottom: 2em;
+}
+
+.messages-view-sent {
+  float: right;
+  border-top-right-radius: 0;
+  border-top-left-radius: var(--panel-border-radius);
+  border-bottom-left-radius: var(--panel-border-radius);
+  border-bottom-right-radius: var(--panel-border-radius);
+}
+
+.messages-view-received {
+  float: left;
+  border-top-left-radius: 0;
+  border-top-right-radius: var(--panel-border-radius);
+  border-bottom-left-radius: var(--panel-border-radius);
+  border-bottom-right-radius: var(--panel-border-radius);
+}

@@ -15,6 +15,7 @@ import MyWalletAddressView from "./components/MyWalletAddressView";
 import DestChatAddressView from "./components/DestChatAddressView";
 import MyChatAddressView from "./components/MyChatAddressView";
 import { getChatMessageAccountPubkey } from "./solana/accounts";
+import MessagesView, { MessageItemViewProps } from "./components/MessagesView";
 
 const DEST_WALLET_ADDRESS_KEY = "destWalletAddress";
 const DEST_CHAT_ADDRESS_KEY = "destChatAddress";
@@ -24,12 +25,17 @@ function App() {
       "8Ughmv792HAMJpES985tgrr4JAg8xgaGL3sMdpfx82w4"
   );
   const [destChatAddress, setDestChatAddress] = useState(
-    localStorage.getItem(DEST_CHAT_ADDRESS_KEY) ??
-      "E2gLzzqVU9a89N9hWQw5biXzhb8N6xDcWP9pkjRkFRPX"
+    localStorage.getItem(DEST_CHAT_ADDRESS_KEY) ?? ""
   );
   const [transactions, setTransactions] = useState<
     Array<TransactionWithSignature>
   >([]);
+  const [receivedMessages, setReceivedMessages] = useState<
+    Array<MessageItemViewProps>
+  >([]);
+  const [sentMessages, setSentMessages] = useState<Array<MessageItemViewProps>>(
+    []
+  );
   const conn = React.useRef<Connection>();
   const [myWallet, setMyWallet] = useState<WalletAdapter | undefined>();
   const [myChatAddress, setMyChatAddress] = useState("");
@@ -58,7 +64,30 @@ function App() {
           messageService
             .getMessageReceivedHistory(connection, walletChatPubkey.toBase58())
             .then((receivedMessages) => {
-              messageService.getMessageSentHistory(connection, destChatAddress);
+              const receivedMessagesProps = receivedMessages
+                .filter((msg) => msg.archive_id && msg.created_on)
+                .map((msg) => {
+                  return new MessageItemViewProps(
+                    msg.archive_id,
+                    msg.created_on,
+                    false
+                  );
+                });
+              setReceivedMessages(receivedMessagesProps);
+              messageService
+                .getMessageSentHistory(connection, destChatAddress)
+                .then((sentMessages) => {
+                  const sentMessagesProps = sentMessages
+                    .filter((msg) => msg.archive_id && msg.created_on)
+                    .map((msg) => {
+                      return new MessageItemViewProps(
+                        msg.archive_id,
+                        msg.created_on,
+                        true
+                      );
+                    });
+                  setSentMessages(sentMessagesProps);
+                });
             })
             .catch((err) =>
               console.log("error getMessageReceivedHistory", err)
@@ -95,10 +124,7 @@ function App() {
         />
       </div>
       <div ref={midRow} className="app-body-mid">
-        <TransactionView
-          transactions={transactions}
-          setMidRowScrollTop={setMidRowScrollTop}
-        />
+        <MessagesView messages={[...receivedMessages, ...sentMessages]} />
       </div>
       <div className="app-body-bottom">
         <MyChatAddressView
