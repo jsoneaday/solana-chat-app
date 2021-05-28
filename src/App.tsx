@@ -1,14 +1,7 @@
 import { Connection } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import DestWalletAddressView from "./components/DestWalletAddressView";
 import MessageSender from "./components/MessageSender";
-import MoneySender from "./components/MoneySender";
-import TransactionView from "./components/TransactionView";
-import {
-  getTransactions,
-  TransactionWithSignature,
-} from "./solana/transactions";
 import { initWallet, WalletAdapter } from "./solana/wallet";
 import messageService from "./solana/messages";
 import MyWalletAddressView from "./components/MyWalletAddressView";
@@ -27,9 +20,6 @@ function App() {
   const [destChatAddress, setDestChatAddress] = useState(
     localStorage.getItem(DEST_CHAT_ADDRESS_KEY) ?? ""
   );
-  const [transactions, setTransactions] = useState<
-    Array<TransactionWithSignature>
-  >([]);
   const [receivedMessages, setReceivedMessages] = useState<
     Array<MessageItemViewProps>
   >([]);
@@ -108,31 +98,11 @@ function App() {
       .catch((err) => console.log("error getMessageReceivedHistory", err));
   };
 
-  const setMidRowScrollTop = (height: number) => {
-    if (midRow.current) {
-      midRow.current.scrollTop = height;
-    }
-  };
-
-  const didSendMoney = () => {
-    getTransactions(conn.current!, myWallet!.publicKey!).then((trans) => {
-      setTransactions(trans);
-    });
-  };
-
   return (
     <div className="screen-root app-body">
       <div className="app-body-top">
         <h3>Chat on Solana</h3>
         <MyWalletAddressView address={myWallet?.publicKey?.toBase58() ?? ""} />
-        <DestWalletAddressView
-          address={destWalletAddress}
-          setAddress={setDestinationWalletAddress}
-        />
-        <MoneySender
-          destinationAddressStr={destWalletAddress}
-          didSendMoney={didSendMoney}
-        />
       </div>
       <div ref={midRow} className="app-body-mid">
         <MessagesView messages={[...receivedMessages, ...sentMessages]} />
