@@ -16,8 +16,8 @@ import {
 import { programId } from "./program";
 
 const CHAT_MESSAGE_ELEMENTS_COUNT = 20;
-const DUMMY_TX_ID = "0000000000000000000000000000000000000000000";
-const DUMMY_CREATED_ON = "0000000000000000";
+export const DUMMY_TX_ID = "0000000000000000000000000000000000000000000";
+export const DUMMY_CREATED_ON = "0000000000000000";
 export class ChatMessage {
   archive_id: string = DUMMY_TX_ID;
   created_on: string = DUMMY_CREATED_ON; // max milliseconds in date
@@ -85,7 +85,7 @@ class MessageService {
     const archive_id = lo.cstr("archive_id");
     const created_on = lo.cstr("created_on");
     const dataStruct = lo.struct(
-      [archive_id, lo.seq(lo.u8(), 3), created_on, lo.seq(lo.u8(), 3)],
+      [archive_id, lo.seq(lo.u8(), 2), created_on, lo.seq(lo.u8(), 2)],
       "ChatMessage"
     );
     const ds = lo.seq(dataStruct, CHAT_MESSAGE_ELEMENTS_COUNT);
@@ -121,13 +121,13 @@ class MessageService {
     connection: Connection,
     wallet: WalletAdapter,
     destPubkeyStr: string,
-    msg: string
+    txid: string
   ): Promise<RpcResponseAndContext<SignatureResult>> {
     console.log("start sendMessage");
     const destPubkey = new PublicKey(destPubkeyStr);
 
     const messageObj = new ChatMessage();
-    messageObj.archive_id = this.getTxIdFromArweave(msg);
+    messageObj.archive_id = this.getTxIdFromArweave(txid);
     messageObj.created_on = this.getCreatedOn();
     const messageInstruction = new TransactionInstruction({
       keys: [{ pubkey: destPubkey, isSigner: false, isWritable: true }],
@@ -147,14 +147,15 @@ class MessageService {
     return result;
   }
 
-  private getTxIdFromArweave(msg: string): string {
+  private getTxIdFromArweave(newTxId: string): string {
     // save message to arweave and get back txid;
     let txid = "";
-    const dummyLength = DUMMY_TX_ID.length - msg.length;
+    const dummyLength = DUMMY_TX_ID.length - newTxId.length;
     for (let i = 0; i < dummyLength; i++) {
       txid += "0";
     }
-    txid += msg;
+    txid += newTxId;
+    console.log("getTxIdFromArweave", txid);
     return txid;
   }
 

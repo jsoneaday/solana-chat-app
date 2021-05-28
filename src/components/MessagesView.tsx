@@ -1,33 +1,40 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { format } from "date-fns";
 import "./MessagesView.css";
-import { create } from "ts-node";
-import { ChatMessage } from "../solana/messages";
+import { ChatMessage, DUMMY_CREATED_ON, DUMMY_TX_ID } from "../solana/messages";
+import arweaveService from "../arweave/arweave";
 
 interface MessagesViewProps {
   messages: Array<MessageItemViewProps>;
 }
 const MessagesView: FC<MessagesViewProps> = ({ messages }) => {
-  const sortedMessages = messages.sort((left, right) => {
-    const leftCreatedOn = left.created_on.replace("+", "");
-    const rightCreatedOn = right.created_on.replace("+", "");
-    if (leftCreatedOn > rightCreatedOn) return 1;
-    if (leftCreatedOn < rightCreatedOn) return -1;
-    return 0;
-  });
-  let index = 0;
-  const views = sortedMessages.map((msg) => {
-    index += 1;
-    return (
-      <MessageItemView
-        key={`msg-item-key-${index}`}
-        message={msg.message}
-        created_on={msg.created_on}
-        sent={msg.sent}
-      />
-    );
-  });
-  return <>{views}</>;
+  const [viewItems, setViewItems] = useState<Array<JSX.Element | undefined>>();
+
+  useEffect(() => {
+    const sortedMessages = messages.sort((left, right) => {
+      const leftCreatedOn = left.created_on.replace("+", "");
+      const rightCreatedOn = right.created_on.replace("+", "");
+      if (leftCreatedOn > rightCreatedOn) return 1;
+      if (leftCreatedOn < rightCreatedOn) return -1;
+      return 0;
+    });
+
+    let index = 0;
+    const views = sortedMessages.map((msg) => {
+      index += 1;
+      return (
+        <MessageItemView
+          key={`msg-item-key-${index}`}
+          message={msg.message}
+          created_on={msg.created_on}
+          sent={msg.sent}
+        />
+      );
+    });
+    setViewItems(views);
+  }, [messages]);
+
+  return <>{viewItems}</>;
 };
 export default MessagesView;
 
@@ -76,18 +83,35 @@ const MessageItemView: FC<MessageItemViewProps> = ({
   }
 };
 
-export function createMessageProps(
+export async function createMessageProps(
   messages: Array<ChatMessage>,
   sent: boolean
-): Array<MessageItemViewProps> {
+): Promise<Array<MessageItemViewProps>> {
   messages.forEach((msg) => {
-    msg.archive_id = msg.archive_id.replace("+", "");
+    //msg.archive_id = msg.archive_id.replace("+", "");
+    //msg.archive_id = msg.archive_id.replace(/[\u0010]/g, "");
     msg.created_on = msg.created_on.replace("+", "");
   });
-  const messageProps = messages
-    .filter((msg) => msg.archive_id && msg.created_on)
-    .map((msg) => {
-      return new MessageItemViewProps(msg.archive_id, msg.created_on, sent);
-    });
+  const filteredMessages = messages.filter(
+    (msg) =>
+      msg.archive_id &&
+      msg.created_on &&
+      !isAllZero(msg.archive_id) &&
+      !isAllZero(msg.created_on)
+  );
+  console.log("filteredMessages", filteredMessages);
+  const arweaveData = await arweaveService.getData(filteredMessages);
+  const messageProps = arweaveData.map((msg) => {
+    return new MessageItemViewProps(msg.message, msg.created_on, sent);
+  });
   return messageProps;
+}
+
+function isAllZero(str: string): boolean {
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] != "0") {
+      return false;
+    }
+  }
+  return true;
 }

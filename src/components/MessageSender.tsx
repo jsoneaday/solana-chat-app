@@ -1,7 +1,7 @@
 import { Connection } from "@solana/web3.js";
 import React, { FC, useState } from "react";
 import arweaveService from "../arweave/arweave";
-import messageService from "../solana/messages";
+import messageService, { ChatMessage } from "../solana/messages";
 import { WalletAdapter } from "../solana/wallet";
 import "./MessageSender.css";
 
@@ -32,7 +32,7 @@ const MessageSender: FC<MessageSenderProps> = ({
 
     // 1 save message to arweave
     const txid = await arweaveService.saveData(message);
-    console.log(txid);
+    console.log("saved txid", txid);
     // 2 save arweave txid to solana
     const result = await messageService.sendMessage(
       connection,

@@ -12,6 +12,12 @@ import MessagesView, {
   createMessageProps,
   MessageItemViewProps,
 } from "./components/MessagesView";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: "http://localhost:3000/graphql",
+  cache: new InMemoryCache(),
+});
 
 const DEST_WALLET_ADDRESS_KEY = "destWalletAddress";
 const DEST_CHAT_ADDRESS_KEY = "destChatAddress";
@@ -73,48 +79,54 @@ function App() {
     messageService
       .getMessageReceivedHistory(connection, walletChatPubkeyStr)
       .then((receivedMessages) => {
-        const receivedMessagesProps = createMessageProps(
-          receivedMessages,
-          false
+        createMessageProps(receivedMessages, false).then(
+          (receivedMessagesProps) => {
+            setReceivedMessages(receivedMessagesProps);
+            if (!destChatAddress) return;
+
+            messageService
+              .getMessageSentHistory(connection, destChatAddress)
+              .then((sentMessages) => {
+                createMessageProps(sentMessages, true).then(
+                  (sentMessagesProps) => setSentMessages(sentMessagesProps)
+                );
+              });
+          }
         );
-        setReceivedMessages(receivedMessagesProps);
-        if (!destChatAddress) return;
-        messageService
-          .getMessageSentHistory(connection, destChatAddress)
-          .then((sentMessages) => {
-            const sentMessagesProps = createMessageProps(sentMessages, true);
-            setSentMessages(sentMessagesProps);
-          });
       })
       .catch((err) => console.log("error getMessageReceivedHistory", err));
   };
 
   return (
-    <div className="screen-root app-body">
-      <div className="app-body-top">
-        <h3>Chat on Solana</h3>
-        <MyWalletAddressView address={myWallet?.publicKey?.toBase58() ?? ""} />
+    <ApolloProvider client={client}>
+      <div className="screen-root app-body">
+        <div className="app-body-top">
+          <h3>Chat on Solana</h3>
+          <MyWalletAddressView
+            address={myWallet?.publicKey?.toBase58() ?? ""}
+          />
+        </div>
+        <div ref={midRow} className="app-body-mid">
+          <MessagesView messages={[...receivedMessages, ...sentMessages]} />
+        </div>
+        <div className="app-body-bottom">
+          <MyChatAddressView
+            address={myChatAddress}
+            setAddress={setMyChatAddress}
+          />
+          <DestChatAddressView
+            address={destChatAddress}
+            setAddress={setDestinationChatAddress}
+          />
+          <MessageSender
+            connection={conn.current}
+            wallet={myWallet}
+            destPubkeyStr={destChatAddress}
+            getMessages={getMessages}
+          />
+        </div>
       </div>
-      <div ref={midRow} className="app-body-mid">
-        <MessagesView messages={[...receivedMessages, ...sentMessages]} />
-      </div>
-      <div className="app-body-bottom">
-        <MyChatAddressView
-          address={myChatAddress}
-          setAddress={setMyChatAddress}
-        />
-        <DestChatAddressView
-          address={destChatAddress}
-          setAddress={setDestinationChatAddress}
-        />
-        <MessageSender
-          connection={conn.current}
-          wallet={myWallet}
-          destPubkeyStr={destChatAddress}
-          getMessages={getMessages}
-        />
-      </div>
-    </div>
+    </ApolloProvider>
   );
 }
 
