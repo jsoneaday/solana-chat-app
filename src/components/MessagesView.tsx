@@ -1,6 +1,8 @@
 import React, { FC } from "react";
 import { format } from "date-fns";
 import "./MessagesView.css";
+import { create } from "ts-node";
+import { ChatMessage } from "../solana/messages";
 
 interface MessagesViewProps {
   messages: Array<MessageItemViewProps>;
@@ -42,15 +44,12 @@ const MessageItemView: FC<MessageItemViewProps> = ({
   sent,
 }) => {
   try {
-    const fixedMessage = message.replace("+", "");
-    if (!fixedMessage) return null;
+    if (!message) return null;
 
-    let fixedCreatedOn = created_on.replace("+", "");
-    console.log("fixedCreatedOn", fixedCreatedOn);
     let finalCreatedOn = "";
-    for (let i = 0; i < fixedCreatedOn.length; i++) {
-      if (Number(fixedCreatedOn[i]) > 0 || Number(finalCreatedOn) > 0) {
-        finalCreatedOn += fixedCreatedOn[i];
+    for (let i = 0; i < created_on.length; i++) {
+      if (Number(created_on[i]) > 0 || Number(finalCreatedOn) > 0) {
+        finalCreatedOn += created_on[i];
       }
     }
     if (!finalCreatedOn || finalCreatedOn.length <= 2) return null;
@@ -68,7 +67,7 @@ const MessageItemView: FC<MessageItemViewProps> = ({
     return (
       <div className={`panel messages-view-container ${sentOrReceivedClass}`}>
         <label>{createdOnDate}</label>
-        <div>{fixedMessage}</div>
+        <div>{message}</div>
       </div>
     );
   } catch (err) {
@@ -76,3 +75,19 @@ const MessageItemView: FC<MessageItemViewProps> = ({
     return null;
   }
 };
+
+export function createMessageProps(
+  messages: Array<ChatMessage>,
+  sent: boolean
+): Array<MessageItemViewProps> {
+  messages.forEach((msg) => {
+    msg.archive_id = msg.archive_id.replace("+", "");
+    msg.created_on = msg.created_on.replace("+", "");
+  });
+  const messageProps = messages
+    .filter((msg) => msg.archive_id && msg.created_on)
+    .map((msg) => {
+      return new MessageItemViewProps(msg.archive_id, msg.created_on, sent);
+    });
+  return messageProps;
+}

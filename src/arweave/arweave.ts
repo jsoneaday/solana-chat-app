@@ -9,7 +9,7 @@ class ArweaveService {
 
   constructor() {
     this.arweave = Arweave.init({
-      host: "127.0.0.1",
+      host: "localhost",
       port: 1984,
       protocol: "http",
     });
@@ -20,17 +20,22 @@ class ArweaveService {
     });
   }
 
-  async saveData(transData: any): Promise<void> {
+  async saveData(transData: any): Promise<string> {
+    console.log("start saveData");
     const data = JSON.stringify(transData);
     const transaction = await this.arweave.createTransaction(
       { data },
-      this.walletKey
+      this.walletKey!
     );
-    await this.arweave.transactions.sign(transaction, this.walletKey);
+    transaction.addTag("Content-Type", "application/json");
+    await this.arweave.transactions.sign(transaction, this.walletKey!);
     await this.arweave.transactions.post(transaction);
-    const status = await this.arweave.transactions.getStatus(transaction.id);
+    console.log("posted transaction");
     await this.testWeave!.mine(); // need this to force immediate mine of related block
+    console.log("forced mine");
+    const status = await this.arweave.transactions.getStatus(transaction.id);
     console.log("saveData status", status);
+    return transaction.id;
   }
 }
 

@@ -26,7 +26,6 @@ export async function getChatMessageAccountPubkey(
       return chatAccountPubkey;
     }
   }
-
   console.log("start creating new chat account");
   const CHAT_SEED = "chat" + Math.random().toString();
   chatAccountPubkey = await PublicKey.createWithSeed(

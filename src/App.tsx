@@ -8,7 +8,10 @@ import MyWalletAddressView from "./components/MyWalletAddressView";
 import DestChatAddressView from "./components/DestChatAddressView";
 import MyChatAddressView from "./components/MyChatAddressView";
 import { getChatMessageAccountPubkey } from "./solana/accounts";
-import MessagesView, { MessageItemViewProps } from "./components/MessagesView";
+import MessagesView, {
+  createMessageProps,
+  MessageItemViewProps,
+} from "./components/MessagesView";
 
 const DEST_WALLET_ADDRESS_KEY = "destWalletAddress";
 const DEST_CHAT_ADDRESS_KEY = "destChatAddress";
@@ -70,28 +73,16 @@ function App() {
     messageService
       .getMessageReceivedHistory(connection, walletChatPubkeyStr)
       .then((receivedMessages) => {
-        const receivedMessagesProps = receivedMessages
-          .filter((msg) => msg.archive_id && msg.created_on)
-          .map((msg) => {
-            return new MessageItemViewProps(
-              msg.archive_id,
-              msg.created_on,
-              false
-            );
-          });
+        const receivedMessagesProps = createMessageProps(
+          receivedMessages,
+          false
+        );
         setReceivedMessages(receivedMessagesProps);
+        if (!destChatAddress) return;
         messageService
           .getMessageSentHistory(connection, destChatAddress)
           .then((sentMessages) => {
-            const sentMessagesProps = sentMessages
-              .filter((msg) => msg.archive_id && msg.created_on)
-              .map((msg) => {
-                return new MessageItemViewProps(
-                  msg.archive_id,
-                  msg.created_on,
-                  true
-                );
-              });
+            const sentMessagesProps = createMessageProps(sentMessages, true);
             setSentMessages(sentMessagesProps);
           });
       })

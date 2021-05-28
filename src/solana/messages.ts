@@ -18,7 +18,7 @@ import { programId } from "./program";
 const CHAT_MESSAGE_ELEMENTS_COUNT = 20;
 const DUMMY_TX_ID = "0000000000000000000000000000000000000000000";
 const DUMMY_CREATED_ON = "0000000000000000";
-class ChatMessage {
+export class ChatMessage {
   archive_id: string = DUMMY_TX_ID;
   created_on: string = DUMMY_CREATED_ON; // max milliseconds in date
   constructor(
