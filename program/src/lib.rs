@@ -16,11 +16,6 @@ pub struct ChatMessage {
     pub created_on: String
 }
 
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
-pub struct ChatMessageWrapper {
-    pub archive_ids: Vec<ChatMessage>
-}
-
 // example arweave tx (length 43)
 // 1seRanklLU_1VTGkEk7P0xAwMJfA7owA1JHW5KyZKlY
 // ReUohI9tEmXQ6EN9H9IkRjY9bSdgql_OdLUCOeMEte0
