@@ -19,13 +19,8 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const DEST_WALLET_ADDRESS_KEY = "destWalletAddress";
 const DEST_CHAT_ADDRESS_KEY = "destChatAddress";
 function App() {
-  const [destWalletAddress, setDestWalletAddress] = useState(
-    localStorage.getItem(DEST_WALLET_ADDRESS_KEY) ??
-      "8Ughmv792HAMJpES985tgrr4JAg8xgaGL3sMdpfx82w4"
-  );
   const [destChatAddress, setDestChatAddress] = useState(
     localStorage.getItem(DEST_CHAT_ADDRESS_KEY) ?? ""
   );
@@ -40,10 +35,6 @@ function App() {
   const [myChatAddress, setMyChatAddress] = useState("");
   const midRow = React.useRef<HTMLDivElement | null>(null);
 
-  const setDestinationWalletAddress = (address: string) => {
-    localStorage.setItem(DEST_WALLET_ADDRESS_KEY, address);
-    setDestWalletAddress(address);
-  };
   const setDestinationChatAddress = (address: string) => {
     localStorage.setItem(DEST_CHAT_ADDRESS_KEY, address);
     setDestChatAddress(address);

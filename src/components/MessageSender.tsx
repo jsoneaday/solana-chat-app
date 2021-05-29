@@ -1,7 +1,7 @@
 import { Connection } from "@solana/web3.js";
 import React, { FC, useState } from "react";
 import arweaveService from "../arweave/arweave";
-import messageService, { ChatMessage } from "../solana/messages";
+import messageService from "../solana/messages";
 import { WalletAdapter } from "../solana/wallet";
 import "./MessageSender.css";
 

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { format } from "date-fns";
 import "./MessagesView.css";
-import { ChatMessage, DUMMY_CREATED_ON, DUMMY_TX_ID } from "../solana/messages";
+import { ChatMessage } from "../solana/messages";
 import arweaveService from "../arweave/arweave";
 
 interface MessagesViewProps {
@@ -109,7 +109,7 @@ export async function createMessageProps(
 
 function isAllZero(str: string): boolean {
   for (let i = 0; i < str.length; i++) {
-    if (str[i] != "0") {
+    if (str[i] !== "0") {
       return false;
     }
   }
